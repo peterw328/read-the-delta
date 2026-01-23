@@ -1,0 +1,157 @@
+{
+  "meta": {
+    "releaseDate": "2026-01-15",
+    "nextRelease": "2026-02-12",
+    "generated_at": "2026-01-22T20:41:38.742Z",
+    "dataSource": "fallback",
+    "previousReleases": [
+      { "date": "2025-12-11", "label": "December 11, 2025" },
+      { "date": "2025-11-13", "label": "November 13, 2025" },
+      { "date": "2025-10-10", "label": "October 10, 2025" }
+    ]
+  },
+  "narrative": {
+    "headline": "Inflation Holds Steady as Core Prices Ease",
+    "lede": "Consumer prices rose 3.4 percent over the past year, unchanged from the prior reading, while core inflation edged lower.",
+    "whyItMatters": "Inflation affects purchasing power for households and influences Federal Reserve policy on interest rates. Changes in price growth shape borrowing costs, wage negotiations, and business planning.",
+    "bullets": [
+      "Annual inflation was unchanged from the prior month.",
+      "Monthly price growth remained moderate.",
+      "Core inflation, excluding food and energy, declined slightly."
+    ]
+  },
+  "series": {
+    "cpi_yoy": {
+      "labelPrimary": "Annual Inflation",
+      "labelQualifier": "CPI Year-over-Year",
+      "value": 3.4,
+      "unit": "percent",
+      "delta": 0,
+      "trend": {
+        "values": [
+          6.4,
+          6.0,
+          5.0,
+          4.9,
+          4.0,
+          3.0,
+          3.2,
+          3.7,
+          3.7,
+          3.2,
+          3.1,
+          3.4,
+          3.1,
+          3.2,
+          3.5,
+          3.4,
+          3.3,
+          3.0,
+          2.9,
+          2.7,
+          2.5,
+          2.9,
+          3.4,
+          3.4
+        ],
+        "period": "monthly",
+        "months": 24
+      },
+      "context": {
+        "twelveMonthAvg": 3.1,
+        "range12m": [
+          2.5,
+          3.5
+        ]
+      }
+    },
+    "cpi_mom": {
+      "labelPrimary": "Monthly Inflation",
+      "labelQualifier": "CPI Month-over-Month",
+      "value": 0.3,
+      "unit": "percent",
+      "delta": 0.1,
+      "trend": {
+        "values": [
+          0.5,
+          0.4,
+          0.1,
+          0.4,
+          0.1,
+          0.2,
+          0.2,
+          0.6,
+          0.4,
+          0.0,
+          0.1,
+          0.3,
+          0.3,
+          0.4,
+          0.4,
+          0.3,
+          0.2,
+          -0.1,
+          0.2,
+          0.2,
+          -0.1,
+          0.2,
+          0.2,
+          0.3
+        ],
+        "period": "monthly",
+        "months": 24
+      },
+      "context": {
+        "twelveMonthAvg": 0.2,
+        "range12m": [
+          -0.1,
+          0.4
+        ]
+      }
+    },
+    "core_yoy": {
+      "labelPrimary": "Core Inflation",
+      "labelQualifier": "Excluding Food and Energy",
+      "value": 3.9,
+      "unit": "percent",
+      "delta": -0.1,
+      "trend": {
+        "values": [
+          5.6,
+          5.5,
+          5.5,
+          5.3,
+          5.3,
+          4.8,
+          4.7,
+          4.3,
+          4.0,
+          4.0,
+          3.9,
+          3.9,
+          3.9,
+          3.8,
+          3.8,
+          3.9,
+          4.0,
+          4.0,
+          3.9,
+          3.8,
+          3.7,
+          3.7,
+          4.0,
+          3.9
+        ],
+        "period": "monthly",
+        "months": 24
+      },
+      "context": {
+        "twelveMonthAvg": 3.9,
+        "range12m": [
+          3.7,
+          4.0
+        ]
+      }
+    }
+  }
+}

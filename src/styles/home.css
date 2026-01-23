@@ -1,0 +1,140 @@
+/* home.css — Homepage styles */
+
+.page-home {
+  max-width: 36rem;
+}
+
+/* Home Header */
+
+.home-header {
+  margin-bottom: var(--space-2xl);
+  padding-bottom: var(--space-lg);
+  border-bottom: 2px solid var(--color-rule);
+}
+
+.home-title {
+  font-size: var(--text-2xl);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-tight);
+  color: var(--color-ink);
+  margin-bottom: var(--space-md);
+}
+
+@media (min-width: 640px) {
+  .home-title {
+    font-size: var(--text-3xl);
+  }
+}
+
+.home-purpose {
+  font-size: var(--text-base);
+  line-height: var(--leading-relaxed);
+  color: var(--color-ink-secondary);
+}
+
+/* Home Sections */
+
+.home-section {
+  margin-bottom: var(--space-xl);
+}
+
+.home-heading {
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wider);
+  color: var(--color-ink-muted);
+  margin-bottom: var(--space-md);
+}
+
+/* Coverage List */
+
+.coverage-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.coverage-item {
+  padding: var(--space-md) 0;
+  border-top: 1px solid var(--color-rule-light);
+}
+
+.coverage-item:last-child {
+  border-bottom: 1px solid var(--color-rule-light);
+}
+
+.coverage-link {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
+
+.coverage-link:hover .coverage-name {
+  color: var(--color-ink);
+}
+
+.coverage-name {
+  display: block;
+  font-size: var(--text-base);
+  font-weight: var(--weight-medium);
+  color: var(--color-ink-secondary);
+  margin-bottom: var(--space-xs);
+}
+
+.coverage-desc {
+  display: block;
+  font-size: var(--text-sm);
+  color: var(--color-ink-muted);
+}
+
+.coverage-item-disabled {
+  opacity: 0.7;
+}
+
+.coverage-item-disabled .coverage-name {
+  color: var(--color-ink-muted);
+}
+
+.coverage-status {
+  display: inline-block;
+  margin-top: var(--space-xs);
+  font-size: var(--text-xs);
+  color: var(--color-ink-faint);
+  font-style: italic;
+}
+
+.coverage-note {
+  margin-top: var(--space-md);
+  font-size: var(--text-xs);
+  color: var(--color-ink-faint);
+}
+
+/* Usage List */
+
+.usage-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.usage-list li {
+  font-size: var(--text-sm);
+  line-height: var(--leading-relaxed);
+  color: var(--color-ink-secondary);
+  padding-left: var(--space-md);
+  position: relative;
+  margin-bottom: var(--space-sm);
+}
+
+.usage-list li::before {
+  content: "·";
+  position: absolute;
+  left: 0;
+  color: var(--color-ink-muted);
+}
+
+.usage-list li:last-child {
+  margin-bottom: 0;
+}

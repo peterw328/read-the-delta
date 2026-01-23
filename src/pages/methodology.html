@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Methodology | Read the Delta</title>
+  <link rel="stylesheet" href="../styles/tokens.css">
+  <link rel="stylesheet" href="../styles/pages.css">
+</head>
+<body data-page="methodology">
+  
+  <div id="site-header-container"></div>
+
+  <main class="page page-prose">
+    
+    <header class="page-header">
+      <h1 class="page-title">Methodology</h1>
+      <p class="page-subtitle">How Read the Delta works.</p>
+    </header>
+
+    <section class="prose-section">
+      <h2>Data Sources</h2>
+      <p>All economic data on this site comes from official U.S. government sources.</p>
+      <ul>
+        <li><strong>Jobs Report:</strong> Bureau of Labor Statistics (BLS). Series: Total Nonfarm Payrolls (CES0000000001), Unemployment Rate (LNS14000000), Average Hourly Earnings (CES0500000003).</li>
+        <li><strong>Inflation Report:</strong> Bureau of Labor Statistics (BLS). Series: Consumer Price Index All Items (CUUR0000SA0), CPI All Items Less Food and Energy (CUUR0000SA0L1E).</li>
+      </ul>
+      <p>Data is retrieved via the BLS Public Data API. No third-party data vendors are used.</p>
+    </section>
+
+    <section class="prose-section">
+      <h2>Update Cadence</h2>
+      <p>Data is updated within 24 hours of each official release.</p>
+      <ul>
+        <li><strong>Jobs Report:</strong> Typically published on the first Friday of each month at 8:30 AM Eastern.</li>
+        <li><strong>Inflation Report:</strong> Typically published around the 10th to 13th of each month at 8:30 AM Eastern.</li>
+      </ul>
+      <p>The "Updated" timestamp in the page header reflects when the data was last fetched, not when the BLS published it.</p>
+    </section>
+
+    <section class="prose-section">
+      <h2>How Changes Are Calculated</h2>
+      <p>All delta values represent simple period-over-period changes.</p>
+      <p><strong>Jobs Report</strong></p>
+      <ul>
+        <li><strong>Monthly Job Change:</strong> Current month employment level minus prior month employment level.</li>
+        <li><strong>Unemployment Rate:</strong> Current month rate minus prior month rate.</li>
+        <li><strong>Average Hourly Earnings:</strong> Current month value minus prior month value.</li>
+      </ul>
+      <p><strong>Inflation Report</strong></p>
+      <ul>
+        <li><strong>Annual Inflation (CPI YoY):</strong> Current month year-over-year rate minus prior month year-over-year rate.</li>
+        <li><strong>Monthly Inflation (CPI MoM):</strong> Current month-over-month rate minus prior month-over-month rate.</li>
+        <li><strong>Core Inflation:</strong> Current month core CPI year-over-year rate minus prior month rate.</li>
+      </ul>
+      <p>No seasonal adjustments are applied beyond those already present in the BLS data. No proprietary models or forecasts are used.</p>
+    </section>
+
+    <section class="prose-section">
+      <h2>What This Site Does Not Do</h2>
+      <p>Read the Delta is a reference tool. It is not:</p>
+      <ul>
+        <li>A forecasting service</li>
+        <li>Investment advice</li>
+        <li>A real-time data feed</li>
+        <li>A trading signal</li>
+      </ul>
+      <p>The site does not offer analysis, predictions, or recommendations. Editorial content describes what changed. It does not explain why or what may happen next.</p>
+    </section>
+
+    <section class="prose-section">
+      <h2>Corrections</h2>
+      <p>If the BLS revises previously published data, this site will reflect the revised figures in the next update cycle. Historical revisions are not currently annotated.</p>
+    </section>
+    
+  </main>
+
+  <div id="site-footer-container"></div>
+  
+  <script type="module" src="../scripts/render.js"></script>
+</body>
+</html>

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jobs Report | Read the Delta</title>
+  <link rel="stylesheet" href="../styles/tokens.css">
+  <link rel="stylesheet" href="../styles/jobs.css">
+</head>
+<body data-page="jobs">
+  
+  <div id="site-header-container"></div>
+
+  <main class="page">
+    
+    <!-- Hero -->
+    <header class="hero">
+      <div class="hero-meta">
+        <span class="section-label">Economy · Jobs Report</span>
+        <span class="meta-sep" aria-hidden="true">·</span>
+        <time id="release-date" datetime="">Loading…</time>
+        <span class="meta-sep" aria-hidden="true">·</span>
+        <span id="generated-at" class="meta-muted">—</span>
+      </div>
+      
+      <h1 id="headline" class="hero-headline">Loading…</h1>
+      <p id="lede" class="hero-lede">Loading…</p>
+      
+      <section id="why-it-matters" class="why-it-matters" aria-labelledby="why-it-matters-heading">
+        <h2 id="why-it-matters-heading" class="why-heading">Why It Matters</h2>
+        <p id="why-it-matters-text">Loading…</p>
+      </section>
+    </header>
+    
+    <!-- Metric Cards -->
+    <section class="metrics" aria-label="Key economic indicators">
+      
+      <!-- Payrolls -->
+      <article class="metric-card" aria-labelledby="payrolls-label-primary">
+        <div class="metric-label">
+          <span id="payrolls-label-primary" class="metric-primary">Monthly Job Change</span>
+          <span id="payrolls-label-qualifier" class="metric-qualifier">Nonfarm Payrolls</span>
+        </div>
+        <div id="payrolls-value" class="metric-value">—</div>
+        <div id="payrolls-delta" class="metric-delta">—</div>
+        <div class="sparkline-wrap" data-series="payrolls"></div>
+        <div id="payrolls-context" class="metric-context">—</div>
+      </article>
+      
+      <!-- Unemployment -->
+      <article class="metric-card" aria-labelledby="unemployment-label-primary">
+        <div class="metric-label">
+          <span id="unemployment-label-primary" class="metric-primary">Unemployment Rate</span>
+          <span id="unemployment-label-qualifier" class="metric-qualifier">Household Survey</span>
+        </div>
+        <div id="unemployment-value" class="metric-value">—</div>
+        <div id="unemployment-delta" class="metric-delta">—</div>
+        <div class="sparkline-wrap" data-series="unemployment"></div>
+        <div id="unemployment-context" class="metric-context">—</div>
+      </article>
+      
+      <!-- Wages -->
+      <article class="metric-card" aria-labelledby="wages-label-primary">
+        <div class="metric-label">
+          <span id="wages-label-primary" class="metric-primary">Average Hourly Earnings</span>
+          <span id="wages-label-qualifier" class="metric-qualifier">Total Private</span>
+        </div>
+        <div id="wages-value" class="metric-value">—</div>
+        <div id="wages-delta" class="metric-delta">—</div>
+        <div class="sparkline-wrap" data-series="wages"></div>
+        <div id="wages-context" class="metric-context">—</div>
+      </article>
+      
+    </section>
+
+    <!-- What Changed -->
+    <section class="what-changed" aria-labelledby="what-changed-heading">
+      <h2 id="what-changed-heading" class="section-heading">What Changed Since Last Release</h2>
+      <ul class="change-list"></ul>
+    </section>
+
+    <!-- Previous Releases -->
+    <section class="previous-releases" aria-labelledby="previous-releases-heading">
+      <h2 id="previous-releases-heading" class="section-heading">Previous Releases</h2>
+      <ul class="release-list"></ul>
+      <p class="archive-note">Archive pages forthcoming.</p>
+    </section>
+    
+    <!-- Page Footer -->
+    <footer class="page-footer">
+      <p class="next-release">
+        Next release: <span id="next-release">—</span>
+      </p>
+      <small id="source-note" class="source-note" hidden>
+        Data shown is placeholder. Live BLS data unavailable.
+      </small>
+      <small class="attribution">
+        Source: U.S. Bureau of Labor Statistics
+      </small>
+    </footer>
+    
+  </main>
+
+  <div id="site-footer-container"></div>
+  
+  <script type="module" src="../scripts/render.js"></script>
+</body>
+</html>

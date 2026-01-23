@@ -1,0 +1,129 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "BLS Jobs Report",
+  "description": "Structured data artifact for ReadTheDelta.com jobs report",
+  "type": "object",
+  "required": ["meta", "narrative", "series"],
+  "properties": {
+    "meta": {
+      "type": "object",
+      "required": ["releaseDate", "nextRelease", "generated_at", "dataSource"],
+      "properties": {
+        "releaseDate": {
+          "type": "string",
+          "format": "date",
+          "description": "Date of the BLS data release (YYYY-MM-DD)"
+        },
+        "nextRelease": {
+          "type": "string",
+          "format": "date",
+          "description": "Expected date of next BLS release (YYYY-MM-DD)"
+        },
+        "generated_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO timestamp when this file was generated"
+        },
+        "dataSource": {
+          "type": "string",
+          "enum": ["live", "fallback"],
+          "description": "Whether data came from live BLS API or fallback values"
+        }
+      }
+    },
+    "narrative": {
+      "type": "object",
+      "required": ["headline", "lede", "whyItMatters"],
+      "properties": {
+        "headline": {
+          "type": "string",
+          "description": "Neutral factual headline"
+        },
+        "lede": {
+          "type": "string",
+          "description": "Contextual summary paragraph"
+        },
+        "whyItMatters": {
+          "type": "string",
+          "maxLength": 300,
+          "description": "Educational anchor. Must be under 50 words."
+        }
+      }
+    },
+    "series": {
+      "type": "object",
+      "required": ["payrolls", "unemployment", "wages"],
+      "properties": {
+        "payrolls": { "$ref": "#/definitions/seriesObject" },
+        "unemployment": { "$ref": "#/definitions/seriesObject" },
+        "wages": { "$ref": "#/definitions/seriesObject" }
+      }
+    }
+  },
+  "definitions": {
+    "seriesObject": {
+      "type": "object",
+      "required": ["labelPrimary", "labelQualifier", "value", "unit", "delta", "trend", "context"],
+      "properties": {
+        "labelPrimary": {
+          "type": "string",
+          "description": "Primary meaning of the metric (e.g., 'Monthly Job Change')"
+        },
+        "labelQualifier": {
+          "type": "string",
+          "description": "Methodology or source qualifier (e.g., 'Nonfarm Payrolls')"
+        },
+        "value": {
+          "type": "number",
+          "description": "Current value"
+        },
+        "unit": {
+          "type": "string",
+          "description": "Unit of measurement (e.g., 'thousands', 'percent', 'dollars')"
+        },
+        "delta": {
+          "type": "number",
+          "description": "Change from previous period (current - previous)"
+        },
+        "trend": {
+          "type": "object",
+          "required": ["values", "period", "months"],
+          "properties": {
+            "values": {
+              "type": "array",
+              "items": { "type": "number" },
+              "minItems": 24,
+              "maxItems": 24,
+              "description": "Last 24 data points, oldest first"
+            },
+            "period": {
+              "type": "string",
+              "const": "monthly"
+            },
+            "months": {
+              "type": "integer",
+              "const": 24
+            }
+          }
+        },
+        "context": {
+          "type": "object",
+          "required": ["twelveMonthAvg", "range12m"],
+          "properties": {
+            "twelveMonthAvg": {
+              "type": "number",
+              "description": "Average of last 12 values"
+            },
+            "range12m": {
+              "type": "array",
+              "items": { "type": "number" },
+              "minItems": 2,
+              "maxItems": 2,
+              "description": "[min, max] of last 12 values"
+            }
+          }
+        }
+      }
+    }
+  }
+}

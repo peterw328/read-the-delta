@@ -1,0 +1,193 @@
+/* pages.css — Styling for static prose pages (About, Methodology, Legal) */
+
+/* ============================================
+   SITE HEADER (shared)
+   ============================================ */
+
+.site-header {
+  border-bottom: 1px solid var(--color-rule-light);
+}
+
+.site-header-inner {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: var(--space-md) var(--space-lg);
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-lg);
+}
+
+.wordmark {
+  font-size: var(--text-base);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-tight);
+  color: var(--color-ink);
+  text-decoration: none;
+}
+
+.site-nav {
+  display: flex;
+  gap: var(--space-lg);
+}
+
+.nav-link {
+  font-size: var(--text-sm);
+  color: var(--color-ink-muted);
+  text-decoration: none;
+}
+
+.nav-link:hover {
+  color: var(--color-ink);
+}
+
+.nav-link-active {
+  color: var(--color-ink);
+  font-weight: var(--weight-medium);
+}
+
+.nav-link-disabled {
+  color: var(--color-ink-faint);
+  cursor: default;
+}
+
+/* ============================================
+   PAGE CONTAINER
+   ============================================ */
+
+.page {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: var(--space-xl) var(--space-lg);
+}
+
+@media (min-width: 640px) {
+  .page {
+    padding: var(--space-2xl) var(--space-lg);
+  }
+}
+
+.page-prose {
+  max-width: 38rem;
+}
+
+/* ============================================
+   PAGE HEADER
+   ============================================ */
+
+.page-header {
+  margin-bottom: var(--space-2xl);
+  padding-bottom: var(--space-lg);
+  border-bottom: 2px solid var(--color-rule);
+}
+
+.page-title {
+  font-size: var(--text-2xl);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-tight);
+  color: var(--color-ink);
+  margin-bottom: var(--space-sm);
+}
+
+@media (min-width: 640px) {
+  .page-title {
+    font-size: var(--text-3xl);
+  }
+}
+
+.page-subtitle {
+  font-size: var(--text-base);
+  color: var(--color-ink-secondary);
+}
+
+/* ============================================
+   PROSE SECTIONS
+   ============================================ */
+
+.prose-section {
+  margin-bottom: var(--space-xl);
+}
+
+.prose-section h2 {
+  font-size: var(--text-base);
+  font-weight: var(--weight-semibold);
+  color: var(--color-ink);
+  margin-bottom: var(--space-sm);
+}
+
+.prose-section p {
+  font-size: var(--text-sm);
+  line-height: var(--leading-relaxed);
+  color: var(--color-ink-secondary);
+  margin-bottom: var(--space-md);
+}
+
+.prose-section p:last-child {
+  margin-bottom: 0;
+}
+
+.prose-section ul {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 var(--space-md) 0;
+}
+
+.prose-section li {
+  font-size: var(--text-sm);
+  line-height: var(--leading-relaxed);
+  color: var(--color-ink-secondary);
+  padding-left: var(--space-md);
+  position: relative;
+  margin-bottom: var(--space-sm);
+}
+
+.prose-section li::before {
+  content: "·";
+  position: absolute;
+  left: 0;
+  color: var(--color-ink-muted);
+}
+
+.prose-section li:last-child {
+  margin-bottom: 0;
+}
+
+.prose-section strong {
+  font-weight: var(--weight-medium);
+  color: var(--color-ink);
+}
+
+/* ============================================
+   SITE FOOTER (shared)
+   ============================================ */
+
+.site-footer {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: var(--space-xl) var(--space-lg);
+  border-top: 1px solid var(--color-rule-light);
+}
+
+.footer-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-md) var(--space-lg);
+  margin-bottom: var(--space-md);
+}
+
+.footer-link {
+  font-size: var(--text-sm);
+  color: var(--color-ink-muted);
+  text-decoration: none;
+}
+
+.footer-link:hover {
+  color: var(--color-ink);
+}
+
+.footer-copyright {
+  font-size: var(--text-xs);
+  color: var(--color-ink-faint);
+  letter-spacing: var(--tracking-wide);
+}

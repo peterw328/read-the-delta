@@ -1,0 +1,157 @@
+{
+  "meta": {
+    "releaseDate": "2026-01-10",
+    "nextRelease": "2026-02-07",
+    "generated_at": "2026-01-22T20:41:38.742Z",
+    "dataSource": "fallback",
+    "previousReleases": [
+      { "date": "2025-12-06", "label": "December 6, 2025" },
+      { "date": "2025-11-01", "label": "November 1, 2025" },
+      { "date": "2025-10-04", "label": "October 4, 2025" }
+    ]
+  },
+  "narrative": {
+    "headline": "Hiring Picks Up as Unemployment Edges Higher",
+    "lede": "Employers added 180,000 jobs, up from the prior month, while the unemployment rate rose to 4.1 percent.",
+    "whyItMatters": "Monthly job figures shape employer hiring decisions and household expectations about income and job security. The data also informs Federal Reserve decisions on interest rates, which affect borrowing costs for families and businesses.",
+    "bullets": [
+      "Payroll growth increased compared with the prior release.",
+      "Unemployment rose slightly after holding steady.",
+      "Wage growth continued at a gradual pace."
+    ]
+  },
+  "series": {
+    "payrolls": {
+      "labelPrimary": "Monthly Job Change",
+      "labelQualifier": "Nonfarm Payrolls",
+      "value": 180,
+      "unit": "thousands",
+      "delta": 37,
+      "trend": {
+        "values": [
+          256,
+          310,
+          175,
+          108,
+          165,
+          272,
+          215,
+          89,
+          142,
+          223,
+          186,
+          117,
+          200,
+          275,
+          165,
+          130,
+          195,
+          245,
+          155,
+          112,
+          178,
+          210,
+          143,
+          180
+        ],
+        "period": "monthly",
+        "months": 24
+      },
+      "context": {
+        "twelveMonthAvg": 182,
+        "range12m": [
+          112,
+          275
+        ]
+      }
+    },
+    "unemployment": {
+      "labelPrimary": "Unemployment Rate",
+      "labelQualifier": "Household Survey",
+      "value": 4.1,
+      "unit": "percent",
+      "delta": 0.1,
+      "trend": {
+        "values": [
+          3.7,
+          3.7,
+          3.8,
+          3.9,
+          3.9,
+          4,
+          4,
+          4.1,
+          4.1,
+          4.2,
+          4.1,
+          4,
+          4,
+          3.9,
+          3.9,
+          4,
+          4,
+          4.1,
+          4.1,
+          4,
+          4,
+          3.9,
+          4,
+          4.1
+        ],
+        "period": "monthly",
+        "months": 24
+      },
+      "context": {
+        "twelveMonthAvg": 4,
+        "range12m": [
+          3.9,
+          4.1
+        ]
+      }
+    },
+    "wages": {
+      "labelPrimary": "Average Hourly Earnings",
+      "labelQualifier": "Private Nonfarm",
+      "value": 35.3,
+      "unit": "dollars",
+      "delta": 0.1,
+      "trend": {
+        "values": [
+          33,
+          33.1,
+          33.2,
+          33.3,
+          33.4,
+          33.5,
+          33.6,
+          33.7,
+          33.8,
+          33.9,
+          34,
+          34.1,
+          34.2,
+          34.3,
+          34.4,
+          34.5,
+          34.6,
+          34.7,
+          34.8,
+          34.9,
+          35,
+          35.1,
+          35.2,
+          35.3
+        ],
+        "period": "monthly",
+        "months": 24
+      },
+      "context": {
+        "twelveMonthAvg": 34.75,
+        "range12m": [
+          34.2,
+          35.3
+        ]
+      }
+    }
+  }
+}

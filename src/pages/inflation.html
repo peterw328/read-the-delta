@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inflation Report | Read the Delta</title>
+  <link rel="stylesheet" href="../styles/tokens.css">
+  <link rel="stylesheet" href="../styles/jobs.css">
+</head>
+<body data-page="inflation">
+  
+  <div id="site-header-container"></div>
+
+  <main class="page">
+    
+    <!-- Hero -->
+    <header class="hero">
+      <div class="hero-meta">
+        <span class="section-label">Economy · Inflation Report</span>
+        <span class="meta-sep" aria-hidden="true">·</span>
+        <time id="release-date" datetime="">Loading…</time>
+        <span class="meta-sep" aria-hidden="true">·</span>
+        <span id="generated-at" class="meta-muted">—</span>
+      </div>
+      
+      <h1 id="headline" class="hero-headline">Loading…</h1>
+      <p id="lede" class="hero-lede">Loading…</p>
+      
+      <section id="why-it-matters" class="why-it-matters" aria-labelledby="why-it-matters-heading">
+        <h2 id="why-it-matters-heading" class="why-heading">Why It Matters</h2>
+        <p id="why-it-matters-text">Loading…</p>
+      </section>
+    </header>
+    
+    <!-- Metric Cards -->
+    <section class="metrics" aria-label="Key economic indicators">
+      
+      <!-- CPI Year-over-Year -->
+      <article class="metric-card" aria-labelledby="cpi_yoy-label-primary">
+        <div class="metric-label">
+          <span id="cpi_yoy-label-primary" class="metric-primary">Annual Inflation</span>
+          <span id="cpi_yoy-label-qualifier" class="metric-qualifier">CPI Year-over-Year</span>
+        </div>
+        <div id="cpi_yoy-value" class="metric-value">—</div>
+        <div id="cpi_yoy-delta" class="metric-delta">—</div>
+        <div class="sparkline-wrap" data-series="cpi_yoy"></div>
+        <div id="cpi_yoy-context" class="metric-context">—</div>
+      </article>
+      
+      <!-- CPI Month-over-Month -->
+      <article class="metric-card" aria-labelledby="cpi_mom-label-primary">
+        <div class="metric-label">
+          <span id="cpi_mom-label-primary" class="metric-primary">Monthly Inflation</span>
+          <span id="cpi_mom-label-qualifier" class="metric-qualifier">CPI Month-over-Month</span>
+        </div>
+        <div id="cpi_mom-value" class="metric-value">—</div>
+        <div id="cpi_mom-delta" class="metric-delta">—</div>
+        <div class="sparkline-wrap" data-series="cpi_mom"></div>
+        <div id="cpi_mom-context" class="metric-context">—</div>
+      </article>
+      
+      <!-- Core CPI Year-over-Year -->
+      <article class="metric-card" aria-labelledby="core_yoy-label-primary">
+        <div class="metric-label">
+          <span id="core_yoy-label-primary" class="metric-primary">Core Inflation</span>
+          <span id="core_yoy-label-qualifier" class="metric-qualifier">Excluding Food and Energy</span>
+        </div>
+        <div id="core_yoy-value" class="metric-value">—</div>
+        <div id="core_yoy-delta" class="metric-delta">—</div>
+        <div class="sparkline-wrap" data-series="core_yoy"></div>
+        <div id="core_yoy-context" class="metric-context">—</div>
+      </article>
+      
+    </section>
+
+    <!-- What Changed -->
+    <section class="what-changed" aria-labelledby="what-changed-heading">
+      <h2 id="what-changed-heading" class="section-heading">What Changed Since Last Release</h2>
+      <ul class="change-list"></ul>
+    </section>
+
+    <!-- Previous Releases -->
+    <section class="previous-releases" aria-labelledby="previous-releases-heading">
+      <h2 id="previous-releases-heading" class="section-heading">Previous Releases</h2>
+      <ul class="release-list"></ul>
+      <p class="archive-note">Archive pages forthcoming.</p>
+    </section>
+    
+    <!-- Page Footer -->
+    <footer class="page-footer">
+      <p class="next-release">
+        Next release: <span id="next-release">—</span>
+      </p>
+      <small id="source-note" class="source-note" hidden>
+        Data shown is placeholder. Live BLS data unavailable.
+      </small>
+      <small class="attribution">
+        Source: U.S. Bureau of Labor Statistics
+      </small>
+    </footer>
+    
+  </main>
+
+  <div id="site-footer-container"></div>
+  
+  <script type="module" src="../scripts/render.js"></script>
+</body>
+</html>
