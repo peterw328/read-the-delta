@@ -35,9 +35,9 @@ function getCurrentPage() {
  */
 function generateHeader(activePage) {
   const navItems = [
-    { id: 'jobs', label: 'Jobs', href: '/src/pages/jobs.html' },
-    { id: 'inflation', label: 'Inflation', href: '/src/pages/inflation.html' },
-    { id: 'methodology', label: 'Methodology', href: '/src/pages/methodology.html' }
+    { id: 'jobs', label: 'Jobs', href: '/jobs.html' },
+    { id: 'inflation', label: 'Inflation', href: '/inflation.html' },
+    { id: 'methodology', label: 'Methodology', href: '/methodology.html' }
   ];
   
   const navLinks = navItems.map(item => {
@@ -63,9 +63,9 @@ function generateFooter() {
   return `
   <footer class="site-footer">
     <nav class="footer-nav" aria-label="Footer navigation">
-      <a href="/src/pages/about.html" class="footer-link">About</a>
-      <a href="/src/pages/methodology.html" class="footer-link">Methodology</a>
-      <a href="/src/pages/legal.html" class="footer-link">Legal</a>
+      <a href="/about.html" class="footer-link">About</a>
+      <a href="/methodology.html" class="footer-link">Methodology</a>
+      <a href="/legal.html" class="footer-link">Legal</a>
     </nav>
     <small class="footer-copyright">Read the Delta</small>
   </footer>`;

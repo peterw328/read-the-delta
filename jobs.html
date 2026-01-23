@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Inflation Report | Read the Delta</title>
-  <link rel="stylesheet" href="../styles/tokens.css">
-  <link rel="stylesheet" href="../styles/jobs.css">
+  <title>Jobs Report | Read the Delta</title>
+  <link rel="stylesheet" href="/src/styles/tokens.css">
+  <link rel="stylesheet" href="/src/styles/jobs.css">
 </head>
-<body data-page="inflation">
+<body data-page="jobs">
   
   <div id="site-header-container"></div>
 
@@ -16,7 +16,7 @@
     <!-- Hero -->
     <header class="hero">
       <div class="hero-meta">
-        <span class="section-label">Economy · Inflation Report</span>
+        <span class="section-label">Economy · Jobs Report</span>
         <span class="meta-sep" aria-hidden="true">·</span>
         <time id="release-date" datetime="">Loading…</time>
         <span class="meta-sep" aria-hidden="true">·</span>
@@ -35,40 +35,40 @@
     <!-- Metric Cards -->
     <section class="metrics" aria-label="Key economic indicators">
       
-      <!-- CPI Year-over-Year -->
-      <article class="metric-card" aria-labelledby="cpi_yoy-label-primary">
+      <!-- Payrolls -->
+      <article class="metric-card" aria-labelledby="payrolls-label-primary">
         <div class="metric-label">
-          <span id="cpi_yoy-label-primary" class="metric-primary">Annual Inflation</span>
-          <span id="cpi_yoy-label-qualifier" class="metric-qualifier">CPI Year-over-Year</span>
+          <span id="payrolls-label-primary" class="metric-primary">Monthly Job Change</span>
+          <span id="payrolls-label-qualifier" class="metric-qualifier">Nonfarm Payrolls</span>
         </div>
-        <div id="cpi_yoy-value" class="metric-value">—</div>
-        <div id="cpi_yoy-delta" class="metric-delta">—</div>
-        <div class="sparkline-wrap" data-series="cpi_yoy"></div>
-        <div id="cpi_yoy-context" class="metric-context">—</div>
+        <div id="payrolls-value" class="metric-value">—</div>
+        <div id="payrolls-delta" class="metric-delta">—</div>
+        <div class="sparkline-wrap" data-series="payrolls"></div>
+        <div id="payrolls-context" class="metric-context">—</div>
       </article>
       
-      <!-- CPI Month-over-Month -->
-      <article class="metric-card" aria-labelledby="cpi_mom-label-primary">
+      <!-- Unemployment -->
+      <article class="metric-card" aria-labelledby="unemployment-label-primary">
         <div class="metric-label">
-          <span id="cpi_mom-label-primary" class="metric-primary">Monthly Inflation</span>
-          <span id="cpi_mom-label-qualifier" class="metric-qualifier">CPI Month-over-Month</span>
+          <span id="unemployment-label-primary" class="metric-primary">Unemployment Rate</span>
+          <span id="unemployment-label-qualifier" class="metric-qualifier">Household Survey</span>
         </div>
-        <div id="cpi_mom-value" class="metric-value">—</div>
-        <div id="cpi_mom-delta" class="metric-delta">—</div>
-        <div class="sparkline-wrap" data-series="cpi_mom"></div>
-        <div id="cpi_mom-context" class="metric-context">—</div>
+        <div id="unemployment-value" class="metric-value">—</div>
+        <div id="unemployment-delta" class="metric-delta">—</div>
+        <div class="sparkline-wrap" data-series="unemployment"></div>
+        <div id="unemployment-context" class="metric-context">—</div>
       </article>
       
-      <!-- Core CPI Year-over-Year -->
-      <article class="metric-card" aria-labelledby="core_yoy-label-primary">
+      <!-- Wages -->
+      <article class="metric-card" aria-labelledby="wages-label-primary">
         <div class="metric-label">
-          <span id="core_yoy-label-primary" class="metric-primary">Core Inflation</span>
-          <span id="core_yoy-label-qualifier" class="metric-qualifier">Excluding Food and Energy</span>
+          <span id="wages-label-primary" class="metric-primary">Average Hourly Earnings</span>
+          <span id="wages-label-qualifier" class="metric-qualifier">Total Private</span>
         </div>
-        <div id="core_yoy-value" class="metric-value">—</div>
-        <div id="core_yoy-delta" class="metric-delta">—</div>
-        <div class="sparkline-wrap" data-series="core_yoy"></div>
-        <div id="core_yoy-context" class="metric-context">—</div>
+        <div id="wages-value" class="metric-value">—</div>
+        <div id="wages-delta" class="metric-delta">—</div>
+        <div class="sparkline-wrap" data-series="wages"></div>
+        <div id="wages-context" class="metric-context">—</div>
       </article>
       
     </section>
@@ -103,6 +103,6 @@
 
   <div id="site-footer-container"></div>
   
-  <script type="module" src="../scripts/render.js"></script>
+  <script type="module" src="/src/scripts/render.js"></script>
 </body>
 </html>
