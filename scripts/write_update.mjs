@@ -51,6 +51,44 @@ function formatDate(date) {
 }
 
 /**
+ * Calculate BLS release date for a given reference period
+ * Jobs: First Friday of the following month
+ * Inflation: Typically 10th-13th of the following month (we'll use 12th as default)
+ */
+function calculateReleaseDate(dataset, referencePeriod) {
+  const [year, month] = referencePeriod.split('-').map(Number);
+  
+  // Release is in the month AFTER reference period
+  let releaseYear = year;
+  let releaseMonth = month + 1;
+  if (releaseMonth > 12) {
+    releaseMonth = 1;
+    releaseYear += 1;
+  }
+  
+  if (dataset === 'jobs') {
+    // First Friday of release month
+    const firstDay = new Date(releaseYear, releaseMonth - 1, 1);
+    const dayOfWeek = firstDay.getDay();
+    
+    // Calculate days until Friday (5)
+    let daysUntilFriday = (5 - dayOfWeek + 7) % 7;
+    if (daysUntilFriday === 0) daysUntilFriday = 0; // If 1st is Friday
+    
+    const firstFriday = 1 + daysUntilFriday;
+    return formatDate(new Date(releaseYear, releaseMonth - 1, firstFriday));
+  }
+  
+  if (dataset === 'inflation') {
+    // Typically 12th of release month
+    return formatDate(new Date(releaseYear, releaseMonth - 1, 12));
+  }
+  
+  // Default fallback
+  return formatDate(new Date(releaseYear, releaseMonth - 1, 1));
+}
+
+/**
  * Auto-detect the most recent normalized file for the dataset
  * Returns YYYY-MM period string or null if none found
  */
@@ -204,6 +242,7 @@ function buildExpectations(existingExpectations) {
 /**
  * Build history with new release appended
  * MUST use reference_period (YYYY-MM), NOT execution date
+ * PREVENTS DUPLICATES by checking if period already exists
  */
 function buildHistory(existingHistory, newReferencePeriod) {
   const previousReleases = existingHistory.previous_releases || [];
@@ -211,6 +250,15 @@ function buildHistory(existingHistory, newReferencePeriod) {
   // Format label from YYYY-MM for display
   const [year, month] = newReferencePeriod.split('-').map(Number);
   const label = `${MONTH_NAMES[month - 1]} ${year}`;
+
+  // Check if this period already exists in history
+  const alreadyExists = previousReleases.some(r => r.date === newReferencePeriod);
+  
+  if (alreadyExists) {
+    // Period already in history, don't add duplicate
+    console.log(`[write_update] Period ${newReferencePeriod} already in history, skipping duplicate`);
+    return { previous_releases: previousReleases };
+  }
 
   // Prepend new release (most recent first)
   // date field uses reference_period (YYYY-MM) to match file system
@@ -467,8 +515,8 @@ async function draftEditorial(dataset, normalized, existingLatest, signal) {
  * Build complete candidate JSON
  */
 async function buildCandidate(dataset, normalized, existingLatest) {
-  // Release date is today (when candidate is generated)
-  const releaseDate = formatDate(new Date());
+  // Calculate proper BLS release date based on reference period
+  const releaseDate = calculateReleaseDate(dataset, normalized.reference_period);
   
   // Locked fields: Copy exactly from existing
   const locked = {

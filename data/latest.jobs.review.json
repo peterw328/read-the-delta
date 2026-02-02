@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-02-02T21:05:56.400Z",
+  "timestamp": "2026-02-02T22:33:16.967Z",
   "dataset": "jobs",
   "candidate_path": "C:\\Users\\Peter\\vibecode\\readthedelta\\data\\latest.jobs.candidate.json",
   "linter": {
@@ -9,7 +9,7 @@
   "numeric_check": [],
   "ai_audit": {
     "status": "PASS",
-    "reason": "The content meets all the criteria for publication. The signal is explicitly stated as 'decelerating and tight', the numeric values match the provided data, and the tone is neutral.",
+    "reason": "The content meets all the criteria for publication. The signal is explicitly stated, numeric values match the provided data, and the tone is neutral.",
     "flags": []
   },
   "final_status": "PASS"
