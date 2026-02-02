@@ -330,18 +330,20 @@ function formatNumber(value) {
 
 /**
  * BUILD PAYROLLS SENTENCE - DELTA ONLY
- * Template: "Nonfarm payrolls {increased by|declined by} X,XXX thousand."
+ * Template: "Nonfarm payrolls {increased by|declined by} X,XXX."
  * Returns null if delta is missing/zero.
+ * Note: Value is already in thousands, so multiply by 1000 for display.
  */
 function buildPayrollsSentence(normalized) {
   const delta = extractValue(normalized.deltas?.payrolls);
   if (!hasValue(delta)) return null;
   
   const verb = delta > 0 ? 'increased by' : 'declined by';
-  const formatted = formatNumber(delta);
-  if (!formatted) return null;
+  // Delta is in thousands, multiply by 1000 for full number display
+  const fullNumber = Math.round(delta * 1000);
+  const formatted = fullNumber.toLocaleString('en-US');
   
-  return `Nonfarm payrolls ${verb} ${formatted} thousand.`;
+  return `Nonfarm payrolls ${verb} ${formatted}.`;
 }
 
 /**
@@ -456,7 +458,9 @@ function buildHeadline(dataset, normalized) {
     }
     
     const verb = delta > 0 ? 'increased by' : 'declined by';
-    const formatted = formatNumber(delta);
+    // Delta is in thousands, multiply by 1000 for full number display
+    const fullNumber = Math.round(delta * 1000);
+    const formatted = fullNumber.toLocaleString('en-US');
     
     // Build summary from available sentences
     const payrollsSentence = buildPayrollsSentence(normalized);
@@ -466,7 +470,7 @@ function buildHeadline(dataset, normalized) {
     const summary = summaryParts.length > 0 ? summaryParts.join(' ') : FALLBACK_TEXT;
     
     return {
-      title: `Payrolls ${verb} ${formatted} thousand in ${period}`,
+      title: `Payrolls ${verb} ${formatted} in ${period}`,
       summary: summary,
       context: SIGNAL_SENTENCE
     };
