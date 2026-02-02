@@ -330,7 +330,7 @@ function formatNumber(value) {
 
 /**
  * BUILD PAYROLLS SENTENCE - DELTA ONLY
- * Template: "Nonfarm payrolls {increased by|declined by} X,XXX."
+ * Template: "Nonfarm payrolls {increased by|declined by} X,XXX thousand."
  * Returns null if delta is missing/zero.
  */
 function buildPayrollsSentence(normalized) {
@@ -341,7 +341,7 @@ function buildPayrollsSentence(normalized) {
   const formatted = formatNumber(delta);
   if (!formatted) return null;
   
-  return `Nonfarm payrolls ${verb} ${formatted}.`;
+  return `Nonfarm payrolls ${verb} ${formatted} thousand.`;
 }
 
 /**
@@ -466,7 +466,7 @@ function buildHeadline(dataset, normalized) {
     const summary = summaryParts.length > 0 ? summaryParts.join(' ') : FALLBACK_TEXT;
     
     return {
-      title: `Payrolls ${verb} ${formatted} in ${period}`,
+      title: `Payrolls ${verb} ${formatted} thousand in ${period}`,
       summary: summary,
       context: SIGNAL_SENTENCE
     };
