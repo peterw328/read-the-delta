@@ -264,7 +264,7 @@ function renderRelease(release) {
  * Render headline section
  * Maps headline.title → #headline
  * Maps headline.summary → #lede
- * Maps headline.context → #why-it-matters-text
+ * Note: headline.context (why it matters) removed from UI - redundant with signal badge
  */
 function renderHeadline(headline) {
   const titleEl = getEl('headline');
@@ -277,13 +277,7 @@ function renderHeadline(headline) {
     summaryEl.textContent = headline.summary;
   }
   
-  const contextEl = getEl('why-it-matters-text');
-  const contextSection = getEl('why-it-matters');
-  if (contextEl && headline.context) {
-    contextEl.textContent = headline.context;
-  } else if (contextSection && !headline.context) {
-    contextSection.hidden = true;
-  }
+  // Why It Matters section removed - signal badge provides same information
 }
 
 /**

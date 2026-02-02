@@ -383,6 +383,21 @@ function buildParticipationSentence(normalized) {
 }
 
 /**
+ * BUILD WAGES SENTENCE - DELTA ONLY
+ * Template: "Average hourly earnings increased by X percent."
+ * Returns null if delta is missing/zero.
+ */
+function buildWagesSentence(normalized) {
+  const delta = extractValue(normalized.deltas?.average_hourly_earnings_yoy);
+  if (!hasValue(delta)) return null;
+  
+  const verb = delta > 0 ? 'increased by' : 'declined by';
+  const formatted = Math.abs(delta).toFixed(1);
+  
+  return `Average hourly earnings ${verb} ${formatted} percent.`;
+}
+
+/**
  * BUILD CPI SENTENCE - LEVEL ONLY
  * Template: "The Consumer Price Index stands at X percent year-over-year."
  * Returns null if missing.
@@ -436,7 +451,7 @@ function buildHeadline(dataset, normalized) {
     const summary = summaryParts.length > 0 ? summaryParts.join(' ') : FALLBACK_TEXT;
     
     return {
-      title: `Payrolls ${verb} ${formatted} in ${period}`,
+      title: `Payrolls ${verb} ${formatted}K in ${period}`,  // Added "K" for clarity
       summary: summary,
       context: SIGNAL_SENTENCE
     };
@@ -468,6 +483,21 @@ function buildHeadline(dataset, normalized) {
 }
 
 /**
+ * BUILD CPI MOM SENTENCE - DELTA ONLY
+ * Template: "Monthly prices {rose|fell} by X percent."
+ * Returns null if delta is missing/zero.
+ */
+function buildCpiMomSentence(normalized) {
+  const delta = extractValue(normalized.deltas?.cpi_mom);
+  if (!hasValue(delta)) return null;
+  
+  const verb = delta > 0 ? 'rose by' : 'fell by';
+  const formatted = Math.abs(delta).toFixed(1);
+  
+  return `Monthly prices ${verb} ${formatted} percent.`;
+}
+
+/**
  * BUILD EDITORIAL - DETERMINISTIC
  * SILENCE on missing data. NO interpretation. NO why_it_matters.
  */
@@ -475,10 +505,11 @@ function buildEditorial(dataset, normalized) {
   if (dataset === 'jobs') {
     const payrollsSentence = buildPayrollsSentence(normalized);
     const unemploymentSentence = buildUnemploymentSentence(normalized);
+    const wagesSentence = buildWagesSentence(normalized);
     const participationSentence = buildParticipationSentence(normalized);
     
-    // what_changed: payrolls + unemployment (if available)
-    const changedParts = [payrollsSentence, unemploymentSentence].filter(Boolean);
+    // what_changed: all three main metrics (payrolls, unemployment, wages)
+    const changedParts = [payrollsSentence, unemploymentSentence, wagesSentence].filter(Boolean);
     const what_changed = changedParts.length > 0 ? changedParts.join(' ') : FALLBACK_TEXT;
     
     // what_didnt: participation (if available)
@@ -495,11 +526,19 @@ function buildEditorial(dataset, normalized) {
   
   if (dataset === 'inflation') {
     const cpiSentence = buildCpiSentence(normalized);
+    const cpiMomSentence = buildCpiMomSentence(normalized);
     const coreSentence = buildCoreCpiSentence(normalized);
     
+    // what_changed: YoY CPI + MoM change
+    const changedParts = [cpiSentence, cpiMomSentence].filter(Boolean);
+    const what_changed = changedParts.length > 0 ? changedParts.join(' ') : FALLBACK_TEXT;
+    
+    // what_didnt: Core inflation (as stability/context)
+    const what_didnt = coreSentence || '';
+    
     return {
-      what_changed: cpiSentence || FALLBACK_TEXT,
-      what_didnt: coreSentence || '',
+      what_changed: what_changed,
+      what_didnt: what_didnt,
       why_it_matters: '',
       revision_note: '',
       editor_note: ''

@@ -21,9 +21,9 @@
     "generated_at": "2026-01-22T21:00:00.000Z"
   },
   "headline": {
-    "title": "Inflation Holds Steady, Remaining Above Fed Target",
-    "summary": "Consumer prices rose 3.4 percent over the past year, unchanged from the prior reading but slightly hotter than economists expected.",
-    "context": "With inflation stuck at 3.4 percent, well above the Fed's 2 percent goal, progress has stalled. This likely delays any immediate pivot to interest rate cuts."
+    "title": "Inflation Report: December 2025",
+    "summary": "The Consumer Price Index stands at 3.4 percent year-over-year.",
+    "context": "Signal: steady and tight."
   },
   "signal": {
     "_note": "Editorial input. Optional in Phase 1. Empty strings preserve schema shape.",
@@ -93,8 +93,9 @@
     }
   },
   "editorial": {
-    "what_changed": "Headline CPI held flat at 3.4 percent year-over-year, exceeding the consensus forecast of 3.3 percent. Monthly prices rose 0.3 percent, an acceleration from the prior month.",
-    "what_didnt": "Core inflation remains sticky at 3.9 percent, showing little downward momentum.",
+    "what_changed": "The Consumer Price Index stands at 3.4 percent year-over-year. Monthly prices rose by 0.3 percent.",
+    "what_didnt": "Core CPI stands at 3.9 percent.",
+    "why_it_matters": "",
     "revision_note": "",
     "editor_note": ""
   },
