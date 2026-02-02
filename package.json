@@ -1,0 +1,35 @@
+{
+  "name": "readthedelta",
+  "version": "1.0.0",
+  "description": "A static, editorial-first macroeconomic data explainer",
+  "type": "module",
+  "scripts": {
+    "lint": "./tools/lint-content.sh",
+    "fetch:jobs": "DATASET=jobs node scripts/fetch_bls.mjs",
+    "fetch:inflation": "DATASET=inflation node scripts/fetch_bls.mjs",
+    "write:jobs": "DATASET=jobs node scripts/write_update.mjs",
+    "write:inflation": "DATASET=inflation node scripts/write_update.mjs",
+    "review:jobs": "DATASET=jobs node scripts/review_update.mjs",
+    "review:inflation": "DATASET=inflation node scripts/review_update.mjs",
+    "validate": "node --input-type=module -e \"import fs from 'fs'; JSON.parse(fs.readFileSync('data/latest.jobs.json')); JSON.parse(fs.readFileSync('data/latest.inflation.json')); console.log('All JSON valid');\""
+  },
+  "dependencies": {
+    "axios": "^1.6.0",
+    "dotenv": "^16.3.0",
+    "openai": "^4.0.0"
+  },
+  "devDependencies": {},
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": [
+    "economics",
+    "data",
+    "bls",
+    "jobs",
+    "inflation"
+  ],
+  "author": "",
+  "license": "UNLICENSED",
+  "private": true
+}

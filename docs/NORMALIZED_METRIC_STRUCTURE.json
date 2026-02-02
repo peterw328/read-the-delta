@@ -1,0 +1,57 @@
+{
+  "reference_period": "2026-01",
+  "fetched_at": "2026-01-23T22:00:00.000Z",
+  "metrics": {
+    "payrolls": {
+      "raw_value": 159526,
+      "display_value": 159526,
+      "unit": "thousands",
+      "scale": 1,
+      "precision": 0
+    },
+    "unemployment_rate": {
+      "raw_value": 4.1,
+      "display_value": 4.1,
+      "unit": "percent",
+      "scale": 1,
+      "precision": 1
+    },
+    "average_hourly_earnings_yoy": {
+      "raw_value": 37.02,
+      "display_value": 3.7,
+      "unit": "percent",
+      "scale": 0.1,
+      "precision": 1
+    }
+  },
+  "deltas": {
+    "payrolls": {
+      "raw_value": 150,
+      "display_value": 150,
+      "unit": "thousands",
+      "precision": 0
+    },
+    "unemployment_rate": {
+      "raw_value": 0.1,
+      "display_value": 0.1,
+      "unit": "percent",
+      "precision": 1
+    },
+    "average_hourly_earnings_yoy": {
+      "raw_value": 0.2,
+      "display_value": 0.2,
+      "unit": "percent",
+      "precision": 1
+    }
+  },
+  "comparisons": {
+    "prior_release": { "...same as deltas..." },
+    "twelve_month_average": {
+      "payrolls": 158500,
+      "unemployment_rate": 4.0
+    },
+    "trend": {
+      "payrolls": [null, null, "...24 values total..."]
+    }
+  }
+}

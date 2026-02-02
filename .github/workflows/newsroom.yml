@@ -2,8 +2,9 @@ name: Newsroom Bot
 
 on:
   schedule:
-    # Run every 30 minutes
-    - cron: '*/30 * * * *'
+    # Run daily at 10 AM ET (3 PM UTC), Monday-Friday only
+    # BLS releases are always on weekdays at 8:30 AM ET
+    - cron: '0 15 * * 1-5'
   workflow_dispatch:
     inputs:
       dataset:

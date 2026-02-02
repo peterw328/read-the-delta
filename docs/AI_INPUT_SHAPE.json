@@ -1,0 +1,35 @@
+{
+  "dataset": "jobs",
+  "period": "2026-01",
+  "period_display": "January 2026",
+  "metrics": {
+    "payrolls": {
+      "value": 159526,
+      "unit": "thousands"
+    },
+    "unemployment_rate": {
+      "value": 4.1,
+      "unit": "percent"
+    },
+    "average_hourly_earnings_yoy": {
+      "value": 3.7,
+      "unit": "percent"
+    }
+  },
+  "deltas": {
+    "payrolls": {
+      "value": 150,
+      "unit": "thousands"
+    },
+    "unemployment_rate": {
+      "value": 0.1,
+      "unit": "percent"
+    },
+    "average_hourly_earnings_yoy": {
+      "value": 0.2,
+      "unit": "percent"
+    }
+  },
+  "signal_state": "decelerating",
+  "signal_pressure": "tight"
+}

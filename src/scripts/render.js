@@ -1,6 +1,10 @@
 /**
  * render.js
  * Data renderer and chrome injector for ReadTheDelta
+ * Compatible with canonical editorial-first JSON schema
+ * Dataset-agnostic: works for jobs, inflation, and future datasets
+ * 
+ * FIXED: Properly handles structured metric format with display_value
  */
 
 /**
@@ -99,7 +103,7 @@ function getEl(id) {
  * Format a date string as "Month Day, Year"
  */
 function formatDate(dateStr) {
-  if (!dateStr || dateStr.includes('PLACEHOLDER')) return null;
+  if (!dateStr) return null;
   const date = new Date(dateStr);
   if (isNaN(date)) return null;
   return new Intl.DateTimeFormat('en-US', {
@@ -129,17 +133,53 @@ function formatGeneratedAt(isoStr) {
 }
 
 /**
+ * Capitalize first letter of a string
+ */
+function capitalize(str) {
+  if (!str) return '';
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+/**
+ * Extract display value from structured or legacy format
+ * Handles: { display_value: X }, { value: X }, or just X
+ */
+function extractDisplayValue(data) {
+  if (data == null) return null;
+  
+  // If it's an object with display_value, use that
+  if (typeof data === 'object' && data.display_value != null) {
+    return data.display_value;
+  }
+  
+  // If it's an object with value (legacy), use that
+  if (typeof data === 'object' && data.value != null) {
+    return data.value;
+  }
+  
+  // Otherwise treat as raw number
+  return typeof data === 'number' ? data : null;
+}
+
+/**
  * Format a number based on unit type
  */
-function formatValue(value, unit) {
+function formatValue(value, unit, precision) {
   if (value == null) return '—';
+  
+  const prec = precision ?? 1;
   
   switch (unit) {
     case 'percent':
       return new Intl.NumberFormat('en-US', {
-        minimumFractionDigits: 1,
-        maximumFractionDigits: 1
+        minimumFractionDigits: prec,
+        maximumFractionDigits: prec
       }).format(value) + '%';
+    
+    case 'thousands':
+      return new Intl.NumberFormat('en-US', {
+        maximumFractionDigits: 0
+      }).format(value) + 'K';
     
     case 'dollars':
       return new Intl.NumberFormat('en-US', {
@@ -149,11 +189,6 @@ function formatValue(value, unit) {
         maximumFractionDigits: 2
       }).format(value);
     
-    case 'thousands':
-      return new Intl.NumberFormat('en-US', {
-        maximumFractionDigits: 0
-      }).format(value) + 'K';
-    
     default:
       return new Intl.NumberFormat('en-US').format(value);
   }
@@ -162,9 +197,10 @@ function formatValue(value, unit) {
 /**
  * Format a delta value with +/− prefix
  */
-function formatDelta(delta, unit) {
+function formatDelta(delta, unit, precision) {
   if (delta == null) return '—';
   
+  const prec = precision ?? 1;
   const isNegative = delta < 0;
   const absValue = Math.abs(delta);
   const prefix = delta > 0 ? '+' : (isNegative ? '−' : '');
@@ -172,9 +208,14 @@ function formatDelta(delta, unit) {
   switch (unit) {
     case 'percent':
       return prefix + new Intl.NumberFormat('en-US', {
-        minimumFractionDigits: 1,
-        maximumFractionDigits: 1
+        minimumFractionDigits: prec,
+        maximumFractionDigits: prec
       }).format(absValue) + '%';
+    
+    case 'thousands':
+      return prefix + new Intl.NumberFormat('en-US', {
+        maximumFractionDigits: 0
+      }).format(absValue) + 'K';
     
     case 'dollars':
       const formatted = new Intl.NumberFormat('en-US', {
@@ -182,11 +223,6 @@ function formatDelta(delta, unit) {
         maximumFractionDigits: 2
       }).format(absValue);
       return prefix + '$' + formatted;
-    
-    case 'thousands':
-      return prefix + new Intl.NumberFormat('en-US', {
-        maximumFractionDigits: 0
-      }).format(absValue) + 'K';
     
     default:
       return prefix + new Intl.NumberFormat('en-US').format(absValue);
@@ -203,22 +239,15 @@ function getDeltaClass(delta) {
 }
 
 /**
- * Check if a string contains editor placeholder text
+ * Render release metadata section
  */
-function isPlaceholder(str) {
-  return typeof str === 'string' && str.includes('WAITING_FOR_EDITOR');
-}
-
-/**
- * Render metadata section
- */
-function renderMeta(meta) {
+function renderRelease(release) {
   const releaseEl = getEl('release-date');
   if (releaseEl) {
-    const formatted = formatDate(meta.releaseDate);
+    const formatted = formatDate(release.date);
     if (formatted) {
       releaseEl.textContent = formatted;
-      releaseEl.setAttribute('datetime', meta.releaseDate);
+      releaseEl.setAttribute('datetime', release.date);
     } else {
       releaseEl.textContent = '—';
     }
@@ -226,134 +255,214 @@ function renderMeta(meta) {
   
   const generatedEl = getEl('generated-at');
   if (generatedEl) {
-    const formatted = formatGeneratedAt(meta.generated_at);
+    const formatted = formatGeneratedAt(release.generated_at);
     generatedEl.textContent = formatted || '—';
-  }
-  
-  const sourceNoteEl = getEl('source-note');
-  if (sourceNoteEl) {
-    sourceNoteEl.hidden = meta.dataSource !== 'fallback';
   }
 }
 
 /**
- * Render narrative section
+ * Render headline section
+ * Maps headline.title → #headline
+ * Maps headline.summary → #lede
+ * Maps headline.context → #why-it-matters-text
  */
-function renderNarrative(narrative) {
-  const headlineEl = getEl('headline');
-  if (headlineEl) {
-    if (isPlaceholder(narrative.headline)) {
-      headlineEl.hidden = true;
-    } else {
-      headlineEl.textContent = narrative.headline;
-    }
+function renderHeadline(headline) {
+  const titleEl = getEl('headline');
+  if (titleEl && headline.title) {
+    titleEl.textContent = headline.title;
   }
   
-  const ledeEl = getEl('lede');
-  if (ledeEl) {
-    if (isPlaceholder(narrative.lede)) {
-      ledeEl.hidden = true;
-    } else {
-      ledeEl.textContent = narrative.lede;
-    }
+  const summaryEl = getEl('lede');
+  if (summaryEl && headline.summary) {
+    summaryEl.textContent = headline.summary;
   }
   
-  const whyTextEl = getEl('why-it-matters-text');
-  const whySectionEl = getEl('why-it-matters');
-  if (whyTextEl && whySectionEl) {
-    if (isPlaceholder(narrative.whyItMatters)) {
-      whySectionEl.hidden = true;
-    } else {
-      whyTextEl.textContent = narrative.whyItMatters;
-    }
+  const contextEl = getEl('why-it-matters-text');
+  const contextSection = getEl('why-it-matters');
+  if (contextEl && headline.context) {
+    contextEl.textContent = headline.context;
+  } else if (contextSection && !headline.context) {
+    contextSection.hidden = true;
   }
+}
+
+/**
+ * Render signal badge (if present and non-empty)
+ * Places badge on its own line below hero-meta for flush-left alignment
+ */
+function renderSignal(signal) {
+  if (!signal) return;
+  
+  const state = signal.state;
+  const pressure = signal.pressure;
+  
+  // Only render if both exist and are non-empty strings
+  if (!state || !pressure || typeof state !== 'string' || typeof pressure !== 'string') {
+    return;
+  }
+  
+  if (state.trim() === '' || pressure.trim() === '') {
+    return;
+  }
+  
+  const heroMeta = document.querySelector('.hero-meta');
+  if (!heroMeta) return;
+  
+  // Create signal badge
+  const badge = document.createElement('span');
+  badge.className = 'signal-badge';
+  badge.textContent = `State: ${capitalize(state)} · Pressure: ${capitalize(pressure)}`;
+  
+  // Insert badge after hero-meta (on its own line)
+  heroMeta.parentNode.insertBefore(badge, heroMeta.nextSibling);
 }
 
 /**
  * Render a single metric card
+ * Uses JSON key directly as ID prefix (no casing conversion)
+ * e.g., metrics.payrolls → #payrolls-value
+ * e.g., metrics.cpi_yoy → #cpi_yoy-value
+ * 
+ * FIXED: Properly extracts display_value from structured format
  */
-function renderMetric(key, data) {
-  const { value, unit, delta, context } = data;
+function renderMetric(key, metric, comparisons) {
+  const { unit, precision } = metric;
   
+  // Extract display value from structured format
+  const value = extractDisplayValue(metric.value);
+  
+  const priorData = comparisons?.prior_release?.[key];
+  
+  // Extract delta from structured format
+  const delta = extractDisplayValue(priorData?.delta);
+  
+  // Extract prior value from structured format
+  const priorValue = extractDisplayValue(priorData?.value);
+  
+  const twelveMonthAvg = comparisons?.twelve_month_average?.[key];
+  
+  // Main value: #${key}-value
   const valueEl = getEl(`${key}-value`);
   if (valueEl) {
-    valueEl.textContent = formatValue(value, unit);
+    valueEl.textContent = formatValue(value, unit, precision);
   }
   
+  // Delta: #${key}-delta
   const deltaEl = getEl(`${key}-delta`);
   if (deltaEl) {
-    deltaEl.textContent = formatDelta(delta, unit);
+    deltaEl.textContent = formatDelta(delta, unit, precision);
     deltaEl.classList.remove('delta-up', 'delta-down', 'delta-flat');
     deltaEl.classList.add(getDeltaClass(delta));
   }
   
+  // Context (12-month average): #${key}-context
   const contextEl = getEl(`${key}-context`);
   if (contextEl) {
-    if (!context || context.twelveMonthAvg == null) {
+    if (twelveMonthAvg != null) {
+      const avgFormatted = formatValue(twelveMonthAvg, unit, precision);
+      contextEl.textContent = `12-mo Avg: ${avgFormatted}`;
+    } else if (priorValue != null) {
+      // Fallback: show prior value if no 12-month average
+      const priorFormatted = formatValue(priorValue, unit, precision);
+      contextEl.textContent = `Prior: ${priorFormatted}`;
+    } else {
       contextEl.textContent = '';
-      return;
     }
-    const avgFormatted = formatValue(context.twelveMonthAvg, unit);
-    contextEl.textContent = `12-mo Avg: ${avgFormatted}`;
   }
 }
 
 /**
- * Render all metric cards from series data
+ * Render all metric cards dynamically
+ * Iterates through metrics object keys (dataset-agnostic)
  */
-function renderSeries(series) {
-  Object.keys(series).forEach(key => {
-    renderMetric(key, series[key]);
+function renderMetrics(metrics, comparisons) {
+  if (!metrics) return;
+  
+  Object.keys(metrics).forEach(key => {
+    renderMetric(key, metrics[key], comparisons);
   });
 }
 
 /**
  * Render next release date in page footer
  */
-function renderPageFooter(meta) {
+function renderPageFooter(release) {
   const nextReleaseEl = getEl('next-release');
   if (nextReleaseEl) {
-    const formatted = formatDate(meta.nextRelease);
+    const formatted = formatDate(release.next_release);
     nextReleaseEl.textContent = formatted || '—';
   }
 }
 
 /**
- * Render "What Changed" bullet list
+ * Render "What Changed" section from editorial
+ * Maps editorial.what_changed → .change-list
+ * Optionally appends editorial.revision_note
  */
-function renderChangeList(bullets) {
+function renderEditorial(editorial) {
   const listEl = document.querySelector('.change-list');
   const sectionEl = document.querySelector('.what-changed');
   
-  if (!listEl) return;
+  if (!listEl || !sectionEl) return;
   
-  if (!bullets || !Array.isArray(bullets) || bullets.length === 0) {
-    if (sectionEl) sectionEl.hidden = true;
+  const whatChanged = editorial?.what_changed;
+  const whatDidnt = editorial?.what_didnt;
+  const whyItMatters = editorial?.why_it_matters;
+  const revisionNote = editorial?.revision_note;
+  
+  if (!whatChanged || whatChanged.trim() === '') {
+    sectionEl.hidden = true;
     return;
   }
+  
+  // Split on sentence boundaries and filter empty strings
+  const bullets = whatChanged.split(/\.\s+/).filter(s => s.trim());
   
   listEl.innerHTML = '';
   
   for (const bullet of bullets) {
-    if (typeof bullet === 'string' && bullet.trim()) {
-      const li = document.createElement('li');
-      li.textContent = bullet;
-      listEl.appendChild(li);
-    }
+    const li = document.createElement('li');
+    li.textContent = bullet.endsWith('.') ? bullet : bullet + '.';
+    listEl.appendChild(li);
   }
   
-  if (sectionEl) sectionEl.hidden = false;
+  // Append "what didn't change" if present
+  if (whatDidnt && whatDidnt.trim() !== '') {
+    const li = document.createElement('li');
+    li.className = 'what-didnt';
+    li.textContent = whatDidnt.endsWith('.') ? whatDidnt : whatDidnt + '.';
+    listEl.appendChild(li);
+  }
+  
+  // Append "why it matters" if present
+  if (whyItMatters && whyItMatters.trim() !== '') {
+    const li = document.createElement('li');
+    li.className = 'why-matters';
+    li.textContent = whyItMatters.endsWith('.') ? whyItMatters : whyItMatters + '.';
+    listEl.appendChild(li);
+  }
+  
+  // Append revision note as final bullet if present
+  if (revisionNote && revisionNote.trim() !== '') {
+    const li = document.createElement('li');
+    li.className = 'revision-note';
+    li.textContent = revisionNote.endsWith('.') ? revisionNote : revisionNote + '.';
+    listEl.appendChild(li);
+  }
+  
+  sectionEl.hidden = false;
 }
 
 /**
  * Render "Previous Releases" list
  */
-function renderPreviousReleases(releases) {
+function renderPreviousReleases(history) {
   const listEl = document.querySelector('.release-list');
   const sectionEl = document.querySelector('.previous-releases');
   
   if (!listEl) return;
   
+  const releases = history?.previous_releases;
   if (!releases || !Array.isArray(releases) || releases.length === 0) {
     if (sectionEl) sectionEl.hidden = true;
     return;
@@ -425,22 +534,28 @@ function getSparklineConfig(values) {
 }
 
 /**
- * Render sparkline charts for all metrics
+ * Render sparkline charts for all metrics dynamically
+ * Uses JSON keys directly to find matching HTML containers
  */
-function renderCharts(series) {
+function renderCharts(metrics, comparisons) {
   if (!Chart) {
     console.warn('[render.js] Chart.js not loaded, skipping sparklines');
     return;
   }
   
-  Object.keys(series).forEach(key => {
+  const trend = comparisons?.trend;
+  if (!trend) return;
+  
+  Object.keys(metrics).forEach(key => {
     try {
+      // Find container using exact key (no casing conversion)
       const container = document.querySelector(`.sparkline-wrap[data-series="${key}"]`);
       if (!container) return;
       
-      const metricData = series[key];
-      if (!metricData?.trend?.values?.length) return;
+      const values = trend[key];
+      if (!values || !Array.isArray(values) || values.length === 0) return;
       
+      // Destroy existing chart instance to prevent memory leaks
       if (chartInstances[key]) {
         chartInstances[key].destroy();
         delete chartInstances[key];
@@ -453,7 +568,7 @@ function renderCharts(series) {
       
       const canvas = document.createElement('canvas');
       canvas.setAttribute('role', 'img');
-      canvas.setAttribute('aria-label', `${metricData.labelPrimary} trend over 24 months`);
+      canvas.setAttribute('aria-label', `${metrics[key].label} trend over ${trend.months || 24} months`);
       canvas.width = containerWidth * 2;
       canvas.height = containerHeight * 2;
       canvas.style.display = 'block';
@@ -461,7 +576,7 @@ function renderCharts(series) {
       canvas.style.height = containerHeight + 'px';
       container.appendChild(canvas);
       
-      const config = getSparklineConfig(metricData.trend.values);
+      const config = getSparklineConfig(values);
       chartInstances[key] = new Chart(canvas, config);
       
     } catch (err) {
@@ -518,15 +633,18 @@ async function render() {
     
     const data = await response.json();
     
-    renderMeta(data.meta);
-    renderNarrative(data.narrative);
-    renderSeries(data.series);
-    renderPageFooter(data.meta);
-    renderChangeList(data.narrative?.bullets);
-    renderPreviousReleases(data.meta?.previousReleases);
+    // Render using canonical schema structure
+    renderRelease(data.release);
+    renderHeadline(data.headline);
+    renderSignal(data.signal);
+    renderMetrics(data.metrics, data.comparisons);
+    renderPageFooter(data.release);
+    renderEditorial(data.editorial);
+    renderPreviousReleases(data.history);
     
+    // Load Chart.js and render sparklines
     await loadChartJS();
-    renderCharts(data.series);
+    renderCharts(data.metrics, data.comparisons);
     
   } catch (err) {
     console.error('[render.js] Failed to load data:', err.message);
