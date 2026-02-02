@@ -1,0 +1,112 @@
+{
+  "dataset": {
+    "id": "jobs",
+    "name": "U.S. Jobs Report",
+    "category": "Economy",
+    "frequency": "monthly"
+  },
+  "source": {
+    "agency": "Bureau of Labor Statistics",
+    "url": "https://www.bls.gov/news.release/empsit.nr0.htm",
+    "series_ids": {
+      "payrolls": "CES0000000001",
+      "unemployment": "LNS14000000",
+      "wages": "CES0500000003"
+    }
+  },
+  "release": {
+    "date": "2026-01-10",
+    "reference_period": "December 2025",
+    "next_release": "2026-02-07",
+    "generated_at": "2026-01-10T13:30:00.000Z"
+  },
+  "headline": {
+    "title": "Hiring Picks Up as Unemployment Edges Higher",
+    "summary": "Employers added 165,000 jobs, up from the prior month, while the unemployment rate rose to 3.9 percent.",
+    "context": "Monthly job figures shape employer hiring decisions and household expectations about income and job security. The data also informs Federal Reserve decisions on interest rates, which affect borrowing costs for families and businesses."
+  },
+  "signal": {
+    "_note": "Editorial input. Optional in Phase 1. Empty strings preserve schema shape.",
+    "state": "",
+    "pressure": "",
+    "confidence": ""
+  },
+  "metrics": {
+    "payrolls": {
+      "label": "Monthly Job Change",
+      "qualifier": "Nonfarm Payrolls",
+      "value": 165,
+      "unit": "thousands",
+      "precision": 0
+    },
+    "unemployment": {
+      "label": "Unemployment Rate",
+      "qualifier": "Household Survey",
+      "value": 3.9,
+      "unit": "percent",
+      "precision": 1
+    },
+    "wages": {
+      "label": "Wage Growth",
+      "qualifier": "Average Hourly Earnings YoY",
+      "value": 4.1,
+      "unit": "percent",
+      "precision": 1
+    }
+  },
+  "comparisons": {
+    "prior_release": {
+      "date": "2025-12-06",
+      "reference_period": "November 2025",
+      "payrolls": {
+        "value": 143,
+        "delta": 22
+      },
+      "unemployment": {
+        "value": 3.8,
+        "delta": 0.1
+      },
+      "wages": {
+        "value": 4.0,
+        "delta": 0.1
+      }
+    },
+    "twelve_month_average": {
+      "payrolls": 182,
+      "unemployment": 3.9,
+      "wages": 4.2
+    },
+    "trend": {
+      "payrolls": [],
+      "unemployment": [],
+      "wages": [],
+      "months": 24
+    }
+  },
+  "expectations": {
+    "_note": "Editorial input. Values sourced manually from consensus surveys. Not first-party data.",
+    "payrolls": {
+      "consensus": 170,
+      "range_low": 150,
+      "range_high": 190
+    },
+    "unemployment": {
+      "consensus": 3.8
+    }
+  },
+  "editorial": {
+    "what_changed": "",
+    "what_didnt": "",
+    "why_it_matters": "",
+    "revision_note": "",
+    "editor_note": ""
+  },
+  "history": {
+    "previous_releases": []
+  },
+  "methodology_notes": {
+    "payrolls": "Monthly change in total nonfarm employment. Seasonally adjusted.",
+    "unemployment": "Percentage of labor force that is jobless and actively seeking work. Seasonally adjusted.",
+    "wages": "Year-over-year percent change in average hourly earnings for all private employees."
+  }
+}

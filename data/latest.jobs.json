@@ -1,157 +1,225 @@
 {
-  "meta": {
-    "releaseDate": "2026-01-10",
-    "nextRelease": "2026-02-07",
-    "generated_at": "2026-01-22T20:41:38.742Z",
-    "dataSource": "BLS",
-    "previousReleases": [
-      { "date": "2025-12-06", "label": "December 6, 2025" },
-      { "date": "2025-11-01", "label": "November 1, 2025" },
-      { "date": "2025-10-04", "label": "October 4, 2025" }
-    ]
+  "dataset": {
+    "id": "jobs",
+    "name": "U.S. Jobs Report",
+    "category": "Economy",
+    "frequency": "monthly"
   },
-  "narrative": {
-    "headline": "Hiring Picks Up as Unemployment Edges Higher",
-    "lede": "Employers added 180,000 jobs, up from the prior month, while the unemployment rate rose to 4.1 percent.",
-    "whyItMatters": "Monthly job figures shape employer hiring decisions and household expectations about income and job security. The data also informs Federal Reserve decisions on interest rates, which affect borrowing costs for families and businesses.",
-    "bullets": [
-      "Payroll growth increased compared with the prior release.",
-      "Unemployment rose slightly after holding steady.",
-      "Wage growth continued at a gradual pace."
-    ]
+  "source": {
+    "agency": "Bureau of Labor Statistics",
+    "url": "https://www.bls.gov/news.release/empsit.nr0.htm",
+    "series_ids": {
+      "payrolls": "CES0000000001",
+      "unemployment": "LNS14000000",
+      "wages": "CES0500000003"
+    }
   },
-  "series": {
+  "release": {
+    "date": "2026-02-02",
+    "reference_period": "2025-12",
+    "next_release": null,
+    "generated_at": "2026-02-02T21:05:41.638Z"
+  },
+  "headline": {
+    "title": "Payrolls increased by 50 in December 2025",
+    "summary": "Nonfarm payrolls increased by 50.",
+    "context": "Signal: decelerating and tight."
+  },
+  "signal": {
+    "_note": "Editorial input. Optional in Phase 1. Empty strings preserve schema shape.",
+    "state": "decelerating",
+    "pressure": "tight",
+    "confidence": "medium"
+  },
+  "metrics": {
     "payrolls": {
-      "labelPrimary": "Monthly Job Change",
-      "labelQualifier": "Nonfarm Payrolls",
-      "value": 180,
+      "label": "Monthly Job Change",
+      "qualifier": "Nonfarm Payrolls",
+      "value": 159526,
       "unit": "thousands",
-      "delta": 37,
-      "trend": {
-        "values": [
-          256,
-          310,
-          175,
-          108,
-          165,
-          272,
-          215,
-          89,
-          142,
-          223,
-          186,
-          117,
-          200,
-          275,
-          165,
-          130,
-          195,
-          245,
-          155,
-          112,
-          178,
-          210,
-          143,
-          180
-        ],
-        "period": "monthly",
-        "months": 24
-      },
-      "context": {
-        "twelveMonthAvg": 182,
-        "range12m": [
-          112,
-          275
-        ]
-      }
+      "precision": 0
     },
     "unemployment": {
-      "labelPrimary": "Unemployment Rate",
-      "labelQualifier": "Household Survey",
-      "value": 4.1,
+      "label": "Unemployment Rate",
+      "qualifier": "Household Survey",
+      "value": 4.4,
       "unit": "percent",
-      "delta": 0.1,
-      "trend": {
-        "values": [
-          3.7,
-          3.7,
-          3.8,
-          3.9,
-          3.9,
-          4,
-          4,
-          4.1,
-          4.1,
-          4.2,
-          4.1,
-          4,
-          4,
-          3.9,
-          3.9,
-          4,
-          4,
-          4.1,
-          4.1,
-          4,
-          4,
-          3.9,
-          4,
-          4.1
-        ],
-        "period": "monthly",
-        "months": 24
-      },
-      "context": {
-        "twelveMonthAvg": 4,
-        "range12m": [
-          3.9,
-          4.1
-        ]
-      }
+      "precision": 1
     },
     "wages": {
-      "labelPrimary": "Average Hourly Earnings",
-      "labelQualifier": "Private Nonfarm",
-      "value": 35.3,
-      "unit": "dollars",
-      "delta": 0.1,
-      "trend": {
-        "values": [
-          33,
-          33.1,
-          33.2,
-          33.3,
-          33.4,
-          33.5,
-          33.6,
-          33.7,
-          33.8,
-          33.9,
-          34,
-          34.1,
-          34.2,
-          34.3,
-          34.4,
-          34.5,
-          34.6,
-          34.7,
-          34.8,
-          34.9,
-          35,
-          35.1,
-          35.2,
-          35.3
-        ],
-        "period": "monthly",
-        "months": 24
-      },
-      "context": {
-        "twelveMonthAvg": 34.75,
-        "range12m": [
-          34.2,
-          35.3
-        ]
-      }
+      "label": "Wage Growth",
+      "qualifier": "Average Hourly Earnings YoY",
+      "value": 37.02,
+      "unit": "percent",
+      "precision": 1
     }
+  },
+  "comparisons": {
+    "prior_release": {
+      "date": "2026-01-24",
+      "reference_period": "2025-12",
+      "payrolls": {
+        "value": {
+          "raw_value": 159526,
+          "display_value": 159526,
+          "unit": "thousands",
+          "scale": 1,
+          "precision": 0
+        },
+        "delta": 50
+      },
+      "unemployment": {
+        "value": {
+          "raw_value": 4.4,
+          "display_value": 4.4,
+          "unit": "number",
+          "scale": 1,
+          "precision": 2
+        },
+        "delta": -0.1
+      },
+      "wages": {
+        "value": {
+          "raw_value": 37.02,
+          "display_value": 37.02,
+          "unit": "number",
+          "scale": 1,
+          "precision": 2
+        },
+        "delta": 0.12
+      }
+    },
+    "twelve_month_average": {
+      "payrolls": 159402,
+      "unemployment": null,
+      "wages": 36.4
+    },
+    "trend": {
+      "payrolls": [
+        157049,
+        157271,
+        157517,
+        157635,
+        157828,
+        157915,
+        158003,
+        158074,
+        158314,
+        158358,
+        158619,
+        158942,
+        159053,
+        159155,
+        159275,
+        159433,
+        159452,
+        159439,
+        159511,
+        159485,
+        159593,
+        159420,
+        159476,
+        159526
+      ],
+      "unemployment": [
+        3.7,
+        3.9,
+        3.9,
+        3.9,
+        3.9,
+        4.1,
+        4.2,
+        4.2,
+        4.1,
+        4.1,
+        4.2,
+        4.1,
+        4,
+        4.2,
+        4.2,
+        4.2,
+        4.3,
+        4.1,
+        4.3,
+        4.3,
+        4.4,
+        null,
+        4.5,
+        4.4
+      ],
+      "wages": [
+        34.47,
+        34.54,
+        34.67,
+        34.75,
+        34.89,
+        35,
+        35.07,
+        35.23,
+        35.33,
+        35.48,
+        35.61,
+        35.68,
+        35.83,
+        35.9,
+        36.02,
+        36.08,
+        36.23,
+        36.31,
+        36.43,
+        36.58,
+        36.65,
+        36.81,
+        36.9,
+        37.02
+      ]
+    }
+  },
+  "expectations": {
+    "_note": "Editorial input. Values sourced manually from consensus surveys. Not first-party data.",
+    "payrolls": {
+      "consensus": null,
+      "range_low": null,
+      "range_high": null
+    },
+    "unemployment": {
+      "consensus": null
+    }
+  },
+  "editorial": {
+    "what_changed": "Nonfarm payrolls increased by 50.",
+    "what_didnt": "",
+    "why_it_matters": "",
+    "revision_note": "",
+    "editor_note": ""
+  },
+  "history": {
+    "previous_releases": [
+      {
+        "date": "2025-12",
+        "label": "December 2025"
+      },
+      {
+        "date": "2025-12",
+        "label": "December 2025"
+      },
+      {
+        "date": "2025-12",
+        "label": "December 2025"
+      },
+      {
+        "date": "2025-12-06",
+        "label": "December 6, 2025"
+      },
+      {
+        "date": "2025-11-01",
+        "label": "November 1, 2025"
+      }
+    ]
+  },
+  "methodology_notes": {
+    "payrolls": "Monthly change in total nonfarm employment. Seasonally adjusted.",
+    "unemployment": "Percentage of labor force that is jobless and actively seeking work. Seasonally adjusted.",
+    "wages": "Year-over-year percent change in average hourly earnings for all private employees."
   }
 }

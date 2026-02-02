@@ -1,0 +1,154 @@
+{
+  "reference_period": "2024-06",
+  "fetched_at": "2026-01-23T23:47:07.475Z",
+  "metrics": {
+    "payrolls": {
+      "raw_value": 157915,
+      "display_value": 157915,
+      "unit": "thousands",
+      "scale": 1,
+      "precision": 0
+    },
+    "unemployment": {
+      "raw_value": 4.1,
+      "display_value": 4.1,
+      "unit": "number",
+      "scale": 1,
+      "precision": 2
+    },
+    "wages": {
+      "raw_value": 35,
+      "display_value": 35,
+      "unit": "number",
+      "scale": 1,
+      "precision": 2
+    }
+  },
+  "deltas": {
+    "payrolls": {
+      "raw_value": 87,
+      "display_value": 87,
+      "unit": "thousands",
+      "precision": 0
+    },
+    "unemployment": {
+      "raw_value": 0.19999999999999973,
+      "display_value": 0.2,
+      "unit": "number",
+      "precision": 2
+    },
+    "wages": {
+      "raw_value": 0.10999999999999943,
+      "display_value": 0.11,
+      "unit": "number",
+      "precision": 2
+    }
+  },
+  "comparisons": {
+    "prior_release": {
+      "payrolls": {
+        "raw_value": 87,
+        "display_value": 87,
+        "unit": "thousands",
+        "precision": 0
+      },
+      "unemployment": {
+        "raw_value": 0.19999999999999973,
+        "display_value": 0.2,
+        "unit": "number",
+        "precision": 2
+      },
+      "wages": {
+        "raw_value": 0.10999999999999943,
+        "display_value": 0.11,
+        "unit": "number",
+        "precision": 2
+      }
+    },
+    "twelve_month_average": {
+      "payrolls": 157536,
+      "unemployment": 3.9,
+      "wages": 34.72
+    },
+    "trend": {
+      "payrolls": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        157049,
+        157271,
+        157517,
+        157635,
+        157828,
+        157915
+      ],
+      "unemployment": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        3.7,
+        3.9,
+        3.9,
+        3.9,
+        3.9,
+        4.1
+      ],
+      "wages": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        34.47,
+        34.54,
+        34.67,
+        34.75,
+        34.89,
+        35
+      ]
+    }
+  }
+}

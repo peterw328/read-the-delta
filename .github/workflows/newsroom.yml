@@ -1,0 +1,244 @@
+name: Newsroom Bot
+
+on:
+  schedule:
+    # Run every 30 minutes
+    - cron: '*/30 * * * *'
+  workflow_dispatch:
+    inputs:
+      dataset:
+        description: 'Dataset to update (jobs, inflation, or all)'
+        required: false
+        default: 'all'
+
+env:
+  NODE_VERSION: '20'
+
+jobs:
+  update-jobs:
+    if: github.event.inputs.dataset == 'jobs' || github.event.inputs.dataset == 'all' || github.event.inputs.dataset == ''
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Fetch BLS Data (Jobs)
+        id: fetch
+        env:
+          DATASET: jobs
+          BLS_API_KEY: ${{ secrets.BLS_API_KEY }}
+        run: node scripts/fetch_bls.mjs
+
+      - name: Check for new data
+        id: check
+        run: |
+          if [ "${{ steps.fetch.outputs.has_new_data }}" != "true" ]; then
+            echo "No new data available for jobs"
+            echo "skip=true" >> $GITHUB_OUTPUT
+          else
+            echo "New data found: ${{ steps.fetch.outputs.new_period }}"
+            echo "skip=false" >> $GITHUB_OUTPUT
+            echo "period=${{ steps.fetch.outputs.new_period }}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create release branch
+        if: steps.check.outputs.skip != 'true'
+        run: |
+          BRANCH="release/jobs-${{ steps.check.outputs.period }}"
+          git checkout -b "$BRANCH"
+          echo "branch=$BRANCH" >> $GITHUB_OUTPUT
+        id: branch
+
+      - name: Run Writer Agent
+        if: steps.check.outputs.skip != 'true'
+        env:
+          DATASET: jobs
+          NEW_PERIOD: ${{ steps.check.outputs.period }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: node scripts/write_update.mjs
+
+      - name: Run Reviewer Agent
+        if: steps.check.outputs.skip != 'true'
+        id: review
+        env:
+          DATASET: jobs
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: node scripts/review_update.mjs
+        continue-on-error: true
+
+      - name: Commit changes
+        if: steps.check.outputs.skip != 'true'
+        run: |
+          git config user.name "Newsroom Bot"
+          git config user.email "bot@readthedelta.com"
+          git add -A
+          git commit -m "📊 Update Jobs Report: ${{ steps.check.outputs.period }}" || echo "No changes to commit"
+
+      - name: Push branch
+        if: steps.check.outputs.skip != 'true'
+        run: git push origin "${{ steps.branch.outputs.branch }}"
+
+      - name: Auto-merge on PASS
+        if: steps.check.outputs.skip != 'true' && steps.review.outputs.review_status == 'PASS'
+        run: |
+          git checkout main
+          git merge "${{ steps.branch.outputs.branch }}" --no-ff -m "🚀 Auto-publish Jobs Report: ${{ steps.check.outputs.period }}"
+          git push origin main
+
+      - name: Create PR on FAIL
+        if: steps.check.outputs.skip != 'true' && steps.review.outputs.review_status == 'FAIL'
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ steps.branch.outputs.branch }}
+          base: main
+          title: "⚠️ Manual Review Required: Jobs Report (${{ steps.check.outputs.period }})"
+          body: |
+            ## Automation Halted
+            
+            The Newsroom Bot generated an update but the Reviewer Agent flagged issues.
+            
+            **Failure Reason:** ${{ steps.review.outputs.fail_reason }}
+            
+            ### Files to Review
+            - `data/latest.jobs.candidate.json` - The generated candidate
+            - `data/latest.jobs.review.json` - Full audit report
+            
+            ### Next Steps
+            1. Review the candidate file
+            2. Fix any issues manually
+            3. Rename to `latest.jobs.json` when ready
+            4. Merge this PR
+          labels: |
+            automation
+            needs-review
+            jobs
+
+  update-inflation:
+    if: github.event.inputs.dataset == 'inflation' || github.event.inputs.dataset == 'all' || github.event.inputs.dataset == ''
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Fetch BLS Data (Inflation)
+        id: fetch
+        env:
+          DATASET: inflation
+          BLS_API_KEY: ${{ secrets.BLS_API_KEY }}
+        run: node scripts/fetch_bls.mjs
+
+      - name: Check for new data
+        id: check
+        run: |
+          if [ "${{ steps.fetch.outputs.has_new_data }}" != "true" ]; then
+            echo "No new data available for inflation"
+            echo "skip=true" >> $GITHUB_OUTPUT
+          else
+            echo "New data found: ${{ steps.fetch.outputs.new_period }}"
+            echo "skip=false" >> $GITHUB_OUTPUT
+            echo "period=${{ steps.fetch.outputs.new_period }}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create release branch
+        if: steps.check.outputs.skip != 'true'
+        run: |
+          BRANCH="release/inflation-${{ steps.check.outputs.period }}"
+          git checkout -b "$BRANCH"
+          echo "branch=$BRANCH" >> $GITHUB_OUTPUT
+        id: branch
+
+      - name: Run Writer Agent
+        if: steps.check.outputs.skip != 'true'
+        env:
+          DATASET: inflation
+          NEW_PERIOD: ${{ steps.check.outputs.period }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: node scripts/write_update.mjs
+
+      - name: Run Reviewer Agent
+        if: steps.check.outputs.skip != 'true'
+        id: review
+        env:
+          DATASET: inflation
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: node scripts/review_update.mjs
+        continue-on-error: true
+
+      - name: Commit changes
+        if: steps.check.outputs.skip != 'true'
+        run: |
+          git config user.name "Newsroom Bot"
+          git config user.email "bot@readthedelta.com"
+          git add -A
+          git commit -m "📊 Update Inflation Report: ${{ steps.check.outputs.period }}" || echo "No changes to commit"
+
+      - name: Push branch
+        if: steps.check.outputs.skip != 'true'
+        run: git push origin "${{ steps.branch.outputs.branch }}"
+
+      - name: Auto-merge on PASS
+        if: steps.check.outputs.skip != 'true' && steps.review.outputs.review_status == 'PASS'
+        run: |
+          git checkout main
+          git merge "${{ steps.branch.outputs.branch }}" --no-ff -m "🚀 Auto-publish Inflation Report: ${{ steps.check.outputs.period }}"
+          git push origin main
+
+      - name: Create PR on FAIL
+        if: steps.check.outputs.skip != 'true' && steps.review.outputs.review_status == 'FAIL'
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ steps.branch.outputs.branch }}
+          base: main
+          title: "⚠️ Manual Review Required: Inflation Report (${{ steps.check.outputs.period }})"
+          body: |
+            ## Automation Halted
+            
+            The Newsroom Bot generated an update but the Reviewer Agent flagged issues.
+            
+            **Failure Reason:** ${{ steps.review.outputs.fail_reason }}
+            
+            ### Files to Review
+            - `data/latest.inflation.candidate.json` - The generated candidate
+            - `data/latest.inflation.review.json` - Full audit report
+            
+            ### Next Steps
+            1. Review the candidate file
+            2. Fix any issues manually
+            3. Rename to `latest.inflation.json` when ready
+            4. Merge this PR
+          labels: |
+            automation
+            needs-review
+            inflation

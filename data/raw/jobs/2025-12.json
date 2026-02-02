@@ -1,0 +1,15 @@
+{
+  "fetched_at": "2026-01-23T23:47:07.550Z",
+  "source": "BLS API (bootstrap backfill)",
+  "reference_period": "2025-12",
+  "values": {
+    "payrolls": 159526,
+    "unemployment": 4.4,
+    "wages": 37.02
+  },
+  "series_ids": {
+    "payrolls": "CES0000000001",
+    "unemployment": "LNS14000000",
+    "wages": "CES0500000003"
+  }
+}

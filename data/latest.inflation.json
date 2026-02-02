@@ -1,157 +1,113 @@
 {
-  "meta": {
-    "releaseDate": "2026-01-15",
-    "nextRelease": "2026-02-12",
-    "generated_at": "2026-01-22T20:41:38.742Z",
-    "dataSource": "BLS",
-    "previousReleases": [
+  "dataset": {
+    "id": "inflation",
+    "name": "U.S. Inflation Report",
+    "category": "Economy",
+    "frequency": "monthly"
+  },
+  "source": {
+    "agency": "Bureau of Labor Statistics",
+    "url": "https://www.bls.gov/news.release/cpi.nr0.htm",
+    "series_ids": {
+      "cpi_yoy": "CUUR0000SA0",
+      "cpi_mom": "CUUR0000SA0",
+      "core_yoy": "CUUR0000SA0L1E"
+    }
+  },
+  "release": {
+    "date": "2026-01-15",
+    "reference_period": "December 2025",
+    "next_release": "2026-02-12",
+    "generated_at": "2026-01-22T21:00:00.000Z"
+  },
+  "headline": {
+    "title": "Inflation Holds Steady, Remaining Above Fed Target",
+    "summary": "Consumer prices rose 3.4 percent over the past year, unchanged from the prior reading but slightly hotter than economists expected.",
+    "context": "With inflation stuck at 3.4 percent, well above the Fed's 2 percent goal, progress has stalled. This likely delays any immediate pivot to interest rate cuts."
+  },
+  "signal": {
+    "_note": "Editorial input. Optional in Phase 1. Empty strings preserve schema shape.",
+    "state": "steady",
+    "pressure": "tight",
+    "confidence": "high"
+  },
+  "metrics": {
+    "cpi_yoy": {
+      "label": "Annual Inflation",
+      "qualifier": "CPI Year-over-Year",
+      "value": 3.4,
+      "unit": "percent",
+      "precision": 1
+    },
+    "cpi_mom": {
+      "label": "Monthly Inflation",
+      "qualifier": "CPI Month-over-Month",
+      "value": 0.3,
+      "unit": "percent",
+      "precision": 1
+    },
+    "core_yoy": {
+      "label": "Core Inflation",
+      "qualifier": "Excluding Food and Energy",
+      "value": 3.9,
+      "unit": "percent",
+      "precision": 1
+    }
+  },
+  "comparisons": {
+    "prior_release": {
+      "date": "2025-12-11",
+      "reference_period": "November 2025",
+      "cpi_yoy": {
+        "value": 3.4,
+        "delta": 0
+      },
+      "cpi_mom": {
+        "value": 0.2,
+        "delta": 0.1
+      },
+      "core_yoy": {
+        "value": 4.0,
+        "delta": -0.1
+      }
+    },
+    "twelve_month_average": {
+      "cpi_yoy": 3.1,
+      "cpi_mom": 0.2,
+      "core_yoy": 3.9
+    },
+    "trend": {
+      "cpi_yoy": [6.4, 6.0, 5.0, 4.9, 4.0, 3.0, 3.2, 3.7, 3.7, 3.2, 3.1, 3.4, 3.1, 3.2, 3.5, 3.4, 3.3, 3.0, 2.9, 2.7, 2.5, 2.9, 3.4, 3.4],
+      "cpi_mom": [0.5, 0.4, 0.1, 0.4, 0.1, 0.2, 0.2, 0.6, 0.4, 0.0, 0.1, 0.3, 0.3, 0.4, 0.4, 0.3, 0.2, -0.1, 0.2, 0.2, -0.1, 0.2, 0.2, 0.3],
+      "core_yoy": [5.6, 5.5, 5.5, 5.3, 5.3, 4.8, 4.7, 4.3, 4.0, 4.0, 3.9, 3.9, 3.9, 3.8, 3.8, 3.9, 4.0, 4.0, 3.9, 3.8, 3.7, 3.7, 4.0, 3.9],
+      "months": 24
+    }
+  },
+  "expectations": {
+    "_note": "Editorial input. Values sourced manually from consensus surveys. Not first-party data.",
+    "cpi_yoy": {
+      "consensus": 3.3
+    },
+    "cpi_mom": {
+      "consensus": 0.2
+    }
+  },
+  "editorial": {
+    "what_changed": "Headline CPI held flat at 3.4 percent year-over-year, exceeding the consensus forecast of 3.3 percent. Monthly prices rose 0.3 percent, an acceleration from the prior month.",
+    "what_didnt": "Core inflation remains sticky at 3.9 percent, showing little downward momentum.",
+    "revision_note": "",
+    "editor_note": ""
+  },
+  "history": {
+    "previous_releases": [
       { "date": "2025-12-11", "label": "December 11, 2025" },
       { "date": "2025-11-13", "label": "November 13, 2025" },
       { "date": "2025-10-10", "label": "October 10, 2025" }
     ]
   },
-  "narrative": {
-    "headline": "Inflation Holds Steady as Core Prices Ease",
-    "lede": "Consumer prices rose 3.4 percent over the past year, unchanged from the prior reading, while core inflation edged lower.",
-    "whyItMatters": "Inflation affects purchasing power for households and influences Federal Reserve policy on interest rates. Changes in price growth shape borrowing costs, wage negotiations, and business planning.",
-    "bullets": [
-      "Annual inflation was unchanged from the prior month.",
-      "Monthly price growth remained moderate.",
-      "Core inflation, excluding food and energy, declined slightly."
-    ]
-  },
-  "series": {
-    "cpi_yoy": {
-      "labelPrimary": "Annual Inflation",
-      "labelQualifier": "CPI Year-over-Year",
-      "value": 3.4,
-      "unit": "percent",
-      "delta": 0,
-      "trend": {
-        "values": [
-          6.4,
-          6.0,
-          5.0,
-          4.9,
-          4.0,
-          3.0,
-          3.2,
-          3.7,
-          3.7,
-          3.2,
-          3.1,
-          3.4,
-          3.1,
-          3.2,
-          3.5,
-          3.4,
-          3.3,
-          3.0,
-          2.9,
-          2.7,
-          2.5,
-          2.9,
-          3.4,
-          3.4
-        ],
-        "period": "monthly",
-        "months": 24
-      },
-      "context": {
-        "twelveMonthAvg": 3.1,
-        "range12m": [
-          2.5,
-          3.5
-        ]
-      }
-    },
-    "cpi_mom": {
-      "labelPrimary": "Monthly Inflation",
-      "labelQualifier": "CPI Month-over-Month",
-      "value": 0.3,
-      "unit": "percent",
-      "delta": 0.1,
-      "trend": {
-        "values": [
-          0.5,
-          0.4,
-          0.1,
-          0.4,
-          0.1,
-          0.2,
-          0.2,
-          0.6,
-          0.4,
-          0.0,
-          0.1,
-          0.3,
-          0.3,
-          0.4,
-          0.4,
-          0.3,
-          0.2,
-          -0.1,
-          0.2,
-          0.2,
-          -0.1,
-          0.2,
-          0.2,
-          0.3
-        ],
-        "period": "monthly",
-        "months": 24
-      },
-      "context": {
-        "twelveMonthAvg": 0.2,
-        "range12m": [
-          -0.1,
-          0.4
-        ]
-      }
-    },
-    "core_yoy": {
-      "labelPrimary": "Core Inflation",
-      "labelQualifier": "Excluding Food and Energy",
-      "value": 3.9,
-      "unit": "percent",
-      "delta": -0.1,
-      "trend": {
-        "values": [
-          5.6,
-          5.5,
-          5.5,
-          5.3,
-          5.3,
-          4.8,
-          4.7,
-          4.3,
-          4.0,
-          4.0,
-          3.9,
-          3.9,
-          3.9,
-          3.8,
-          3.8,
-          3.9,
-          4.0,
-          4.0,
-          3.9,
-          3.8,
-          3.7,
-          3.7,
-          4.0,
-          3.9
-        ],
-        "period": "monthly",
-        "months": 24
-      },
-      "context": {
-        "twelveMonthAvg": 3.9,
-        "range12m": [
-          3.7,
-          4.0
-        ]
-      }
-    }
+  "methodology_notes": {
+    "cpi_yoy": "12-month percent change in the Consumer Price Index for All Urban Consumers. Seasonally adjusted.",
+    "cpi_mom": "Monthly percent change in the Consumer Price Index. Seasonally adjusted.",
+    "core_yoy": "12-month percent change in CPI excluding food and energy. Seasonally adjusted."
   }
 }
