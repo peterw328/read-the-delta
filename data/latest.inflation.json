@@ -21,8 +21,8 @@
     "generated_at": "2026-01-22T21:00:00.000Z"
   },
   "headline": {
-    "title": "Inflation Report: December 2025",
-    "summary": "The Consumer Price Index stands at 3.4 percent year-over-year.",
+    "title": "Inflation measured 3.4 percent year-over-year in December 2025",
+    "summary": "The Consumer Price Index stands at 3.4 percent year-over-year. Monthly prices increased by 0.3 percent.",
     "context": "Signal: steady and tight."
   },
   "signal": {
@@ -93,8 +93,8 @@
     }
   },
   "editorial": {
-    "what_changed": "The Consumer Price Index stands at 3.4 percent year-over-year. Monthly prices rose by 0.3 percent.",
-    "what_didnt": "Core CPI stands at 3.9 percent.",
+    "what_changed": "The Consumer Price Index stands at 3.4 percent year-over-year. Monthly prices increased by 0.3 percent.",
+    "what_didnt": "Core CPI stands at 3.9 percent year-over-year.",
     "why_it_matters": "",
     "revision_note": "",
     "editor_note": ""

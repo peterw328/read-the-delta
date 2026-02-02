@@ -330,7 +330,7 @@ function formatNumber(value) {
 
 /**
  * BUILD PAYROLLS SENTENCE - DELTA ONLY
- * Template: "Nonfarm payrolls {increased by|declined by} X."
+ * Template: "Nonfarm payrolls {increased by|declined by} X,XXX."
  * Returns null if delta is missing/zero.
  */
 function buildPayrollsSentence(normalized) {
@@ -411,14 +411,29 @@ function buildCpiSentence(normalized) {
 
 /**
  * BUILD CORE CPI SENTENCE - LEVEL ONLY
- * Template: "Core CPI stands at X percent."
+ * Template: "Core CPI stands at X percent year-over-year."
  * Returns null if missing.
  */
 function buildCoreCpiSentence(normalized) {
   const level = extractValue(normalized.metrics?.cpi_core_yoy);
   if (!hasValue(level)) return null;
   
-  return `Core CPI stands at ${level} percent.`;
+  return `Core CPI stands at ${level} percent year-over-year.`;
+}
+
+/**
+ * BUILD CPI MOM SENTENCE - DELTA ONLY
+ * Template: "Monthly prices {increased by|declined by} X percent."
+ * Returns null if delta is missing/zero.
+ */
+function buildCpiMomSentence(normalized) {
+  const delta = extractValue(normalized.deltas?.cpi_mom);
+  if (!hasValue(delta)) return null;
+  
+  const verb = delta > 0 ? 'increased by' : 'declined by';
+  const formatted = Math.abs(delta).toFixed(1);
+  
+  return `Monthly prices ${verb} ${formatted} percent.`;
 }
 
 /**
@@ -451,16 +466,16 @@ function buildHeadline(dataset, normalized) {
     const summary = summaryParts.length > 0 ? summaryParts.join(' ') : FALLBACK_TEXT;
     
     return {
-      title: `Payrolls ${verb} ${formatted}K in ${period}`,  // Added "K" for clarity
+      title: `Payrolls ${verb} ${formatted} in ${period}`,
       summary: summary,
       context: SIGNAL_SENTENCE
     };
   }
   
   if (dataset === 'inflation') {
-    const cpiSentence = buildCpiSentence(normalized);
+    const level = extractValue(normalized.metrics?.cpi_all_items_yoy);
     
-    if (!cpiSentence) {
+    if (!hasValue(level)) {
       return {
         title: `Inflation Report: ${period}`,
         summary: FALLBACK_TEXT,
@@ -468,9 +483,16 @@ function buildHeadline(dataset, normalized) {
       };
     }
     
+    // Build summary with both YoY and MoM when available
+    const cpiSentence = buildCpiSentence(normalized);
+    const cpiMomSentence = buildCpiMomSentence(normalized);
+    
+    const summaryParts = [cpiSentence, cpiMomSentence].filter(Boolean);
+    const summary = summaryParts.length > 0 ? summaryParts.join(' ') : FALLBACK_TEXT;
+    
     return {
-      title: `Inflation Report: ${period}`,
-      summary: cpiSentence,
+      title: `Inflation measured ${level} percent year-over-year in ${period}`,
+      summary: summary,
       context: SIGNAL_SENTENCE
     };
   }
