@@ -89,6 +89,24 @@ function calculateReleaseDate(dataset, referencePeriod) {
 }
 
 /**
+ * Calculate NEXT release date (one month after current release)
+ */
+function calculateNextRelease(dataset, currentReferencePeriod) {
+  const [year, month] = currentReferencePeriod.split('-').map(Number);
+  
+  // Next release is for the NEXT month's data
+  let nextYear = year;
+  let nextMonth = month + 1;
+  if (nextMonth > 12) {
+    nextMonth = 1;
+    nextYear += 1;
+  }
+  
+  const nextPeriod = `${nextYear}-${String(nextMonth).padStart(2, '0')}`;
+  return calculateReleaseDate(dataset, nextPeriod);
+}
+
+/**
  * Auto-detect the most recent normalized file for the dataset
  * Returns YYYY-MM period string or null if none found
  */
@@ -518,6 +536,9 @@ async function buildCandidate(dataset, normalized, existingLatest) {
   // Calculate proper BLS release date based on reference period
   const releaseDate = calculateReleaseDate(dataset, normalized.reference_period);
   
+  // Calculate next release date
+  const nextReleaseDate = calculateNextRelease(dataset, normalized.reference_period);
+  
   // Locked fields: Copy exactly from existing
   const locked = {
     dataset: existingLatest.dataset,
@@ -542,7 +563,7 @@ async function buildCandidate(dataset, normalized, existingLatest) {
     release: {
       date: releaseDate,
       reference_period: normalized.reference_period,  // YYYY-MM format per spec
-      next_release: null,  // Per spec: MUST be null
+      next_release: nextReleaseDate,  // Calculated next first Friday/12th
       generated_at: new Date().toISOString()
     },
     headline: drafted.headline,

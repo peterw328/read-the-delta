@@ -611,6 +611,64 @@ function loadChartJS() {
 }
 
 /**
+ * Update SEO meta tags dynamically based on data
+ */
+function updateSEOMetaTags(data) {
+  const page = getCurrentPage();
+  const dataset = page === 'inflation' ? 'Inflation' : 'Jobs';
+  
+  // Update title
+  if (data.headline?.title) {
+    document.title = `${data.headline.title} | ${dataset} Report | Read the Delta`;
+  }
+  
+  // Update meta description
+  const metaDesc = document.querySelector('meta[name="description"]');
+  if (metaDesc && data.headline?.summary) {
+    const desc = `${data.headline.summary} Updated ${formatDate(data.release?.date) || 'recently'} with BLS data.`;
+    metaDesc.setAttribute('content', desc);
+  }
+  
+  // Update Open Graph tags
+  const ogTitle = document.querySelector('meta[property="og:title"]');
+  if (ogTitle && data.headline?.title) {
+    ogTitle.setAttribute('content', `${data.headline.title} | Read the Delta`);
+  }
+  
+  const ogDesc = document.querySelector('meta[property="og:description"]');
+  if (ogDesc && data.headline?.summary) {
+    ogDesc.setAttribute('content', data.headline.summary);
+  }
+  
+  // Update Twitter Card tags
+  const twitterTitle = document.querySelector('meta[name="twitter:title"]');
+  if (twitterTitle && data.headline?.title) {
+    twitterTitle.setAttribute('content', `${data.headline.title} | Read the Delta`);
+  }
+  
+  const twitterDesc = document.querySelector('meta[name="twitter:description"]');
+  if (twitterDesc && data.headline?.summary) {
+    twitterDesc.setAttribute('content', data.headline.summary);
+  }
+  
+  // Update structured data
+  const structuredData = document.getElementById('structured-data');
+  if (structuredData && data.release) {
+    try {
+      const schemaData = JSON.parse(structuredData.textContent);
+      schemaData.name = `U.S. ${dataset} Report - ${data.release.reference_period}`;
+      schemaData.description = data.headline?.summary || schemaData.description;
+      schemaData.datePublished = data.release.date;
+      schemaData.dateModified = data.release.generated_at;
+      schemaData.temporalCoverage = data.release.reference_period;
+      structuredData.textContent = JSON.stringify(schemaData, null, 2);
+    } catch (err) {
+      console.warn('[render.js] Failed to update structured data:', err.message);
+    }
+  }
+}
+
+/**
  * Main render function
  */
 async function render() {
@@ -632,6 +690,9 @@ async function render() {
     }
     
     const data = await response.json();
+    
+    // Update SEO meta tags first
+    updateSEOMetaTags(data);
     
     // Render using canonical schema structure
     renderRelease(data.release);

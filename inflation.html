@@ -3,13 +3,26 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- Dynamic meta tags will be set by JavaScript -->
   <title>Inflation Report | Read the Delta</title>
-  <meta name="description" content="A calm, factual breakdown of the latest U.S. inflation data.">
-  <link rel="icon" href="/favicon.ico">
+  <meta name="description" content="Latest U.S. inflation data from the Bureau of Labor Statistics. Updated monthly with CPI and core inflation statistics.">
+  
+  <!-- Open Graph / Social Media -->
   <meta property="og:title" content="Inflation Report | Read the Delta">
-  <meta property="og:description" content="A calm, factual breakdown of the latest U.S. inflation data.">
+  <meta property="og:description" content="Latest U.S. inflation data from the Bureau of Labor Statistics.">
   <meta property="og:type" content="article">
   <meta property="og:site_name" content="Read the Delta">
+  <meta property="og:url" content="https://readthedelta.com/inflation">
+  
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Inflation Report | Read the Delta">
+  <meta name="twitter:description" content="Latest U.S. inflation data from the Bureau of Labor Statistics.">
+  
+  <link rel="icon" href="/favicon.ico">
+  <link rel="canonical" href="https://readthedelta.com/inflation">
+  
   <link rel="stylesheet" href="/src/styles/tokens.css">
   <link rel="stylesheet" href="/src/styles/jobs.css">
 </head>
@@ -97,9 +110,6 @@
       <p class="next-release">
         Next release: <span id="next-release">—</span>
       </p>
-      <small id="source-note" class="source-note" hidden>
-        Data shown is placeholder. Live BLS data unavailable.
-      </small>
       <small class="attribution">
         Source: U.S. Bureau of Labor Statistics
       </small>
@@ -108,6 +118,32 @@
   </main>
 
   <div id="site-footer-container"></div>
+  
+  <!-- Structured Data -->
+  <script type="application/ld+json" id="structured-data">
+  {
+    "@context": "https://schema.org",
+    "@type": "Dataset",
+    "name": "U.S. Inflation Report",
+    "description": "Monthly Consumer Price Index statistics from the Bureau of Labor Statistics",
+    "publisher": {
+      "@type": "Organization",
+      "name": "Read the Delta",
+      "url": "https://readthedelta.com"
+    },
+    "provider": {
+      "@type": "Organization",
+      "name": "U.S. Bureau of Labor Statistics",
+      "url": "https://www.bls.gov"
+    },
+    "license": "https://www.bls.gov/bls/linksite.htm",
+    "temporalCoverage": "2024-01/..",
+    "spatial": {
+      "@type": "Place",
+      "name": "United States"
+    }
+  }
+  </script>
   
   <script type="module" src="/src/scripts/render.js"></script>
 </body>
