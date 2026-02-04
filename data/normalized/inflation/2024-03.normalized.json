@@ -1,0 +1,154 @@
+{
+  "reference_period": "2024-03",
+  "fetched_at": "2026-02-04T01:21:09.200Z",
+  "metrics": {
+    "cpi_yoy": {
+      "raw_value": 312.332,
+      "display_value": 312.33,
+      "unit": "number",
+      "scale": 1,
+      "precision": 2
+    },
+    "cpi_mom": {
+      "raw_value": 312.332,
+      "display_value": 312.3,
+      "unit": "percent",
+      "scale": 1,
+      "precision": 1
+    },
+    "core_yoy": {
+      "raw_value": 317.088,
+      "display_value": 317.09,
+      "unit": "number",
+      "scale": 1,
+      "precision": 2
+    }
+  },
+  "deltas": {
+    "cpi_yoy": {
+      "raw_value": 2,
+      "display_value": 2,
+      "unit": "number",
+      "precision": 2
+    },
+    "cpi_mom": {
+      "raw_value": 2,
+      "display_value": 2,
+      "unit": "percent",
+      "precision": 1
+    },
+    "core_yoy": {
+      "raw_value": 1.669999999999959,
+      "display_value": 1.67,
+      "unit": "number",
+      "precision": 2
+    }
+  },
+  "comparisons": {
+    "prior_release": {
+      "cpi_yoy": {
+        "raw_value": 2,
+        "display_value": 2,
+        "unit": "number",
+        "precision": 2
+      },
+      "cpi_mom": {
+        "raw_value": 2,
+        "display_value": 2,
+        "unit": "percent",
+        "precision": 1
+      },
+      "core_yoy": {
+        "raw_value": 1.669999999999959,
+        "display_value": 1.67,
+        "unit": "number",
+        "precision": 2
+      }
+    },
+    "twelve_month_average": {
+      "cpi_yoy": 310.36,
+      "cpi_mom": 310.3,
+      "core_yoy": 315.38
+    },
+    "trend": {
+      "cpi_yoy": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        308.42,
+        310.33,
+        312.33
+      ],
+      "cpi_mom": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        308.4,
+        310.3,
+        312.3
+      ],
+      "core_yoy": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        313.62,
+        315.42,
+        317.09
+      ]
+    }
+  }
+}

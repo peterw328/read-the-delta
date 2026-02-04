@@ -1,0 +1,154 @@
+{
+  "reference_period": "2024-05",
+  "fetched_at": "2026-02-04T01:21:09.203Z",
+  "metrics": {
+    "cpi_yoy": {
+      "raw_value": 314.069,
+      "display_value": 314.07,
+      "unit": "number",
+      "scale": 1,
+      "precision": 2
+    },
+    "cpi_mom": {
+      "raw_value": 314.069,
+      "display_value": 314.1,
+      "unit": "percent",
+      "scale": 1,
+      "precision": 1
+    },
+    "core_yoy": {
+      "raw_value": 318.629,
+      "display_value": 318.63,
+      "unit": "number",
+      "scale": 1,
+      "precision": 2
+    }
+  },
+  "deltas": {
+    "cpi_yoy": {
+      "raw_value": 0.5199999999999818,
+      "display_value": 0.52,
+      "unit": "number",
+      "precision": 2
+    },
+    "cpi_mom": {
+      "raw_value": 0.6000000000000227,
+      "display_value": 0.6,
+      "unit": "percent",
+      "precision": 1
+    },
+    "core_yoy": {
+      "raw_value": 0.6499999999999773,
+      "display_value": 0.65,
+      "unit": "number",
+      "precision": 2
+    }
+  },
+  "comparisons": {
+    "prior_release": {
+      "cpi_yoy": {
+        "raw_value": 0.5199999999999818,
+        "display_value": 0.52,
+        "unit": "number",
+        "precision": 2
+      },
+      "cpi_mom": {
+        "raw_value": 0.6000000000000227,
+        "display_value": 0.6,
+        "unit": "percent",
+        "precision": 1
+      },
+      "core_yoy": {
+        "raw_value": 0.6499999999999773,
+        "display_value": 0.65,
+        "unit": "number",
+        "precision": 2
+      }
+    },
+    "twelve_month_average": {
+      "cpi_yoy": 311.74,
+      "cpi_mom": 311.7,
+      "core_yoy": 316.55
+    },
+    "trend": {
+      "cpi_yoy": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        308.42,
+        310.33,
+        312.33,
+        313.55,
+        314.07
+      ],
+      "cpi_mom": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        308.4,
+        310.3,
+        312.3,
+        313.5,
+        314.1
+      ],
+      "core_yoy": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        313.62,
+        315.42,
+        317.09,
+        317.98,
+        318.63
+      ]
+    }
+  }
+}
