@@ -38,6 +38,42 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Check if bootstrap needed (Jobs)
+        id: bootstrap_check
+        run: |
+          if [ ! -d "data/normalized/jobs" ] || [ -z "$(ls -A data/normalized/jobs 2>/dev/null)" ]; then
+            echo "needs_bootstrap=true" >> $GITHUB_OUTPUT
+            echo "Bootstrap required: No historical data found"
+          else
+            # Count files to ensure we have sufficient history
+            FILE_COUNT=$(ls -1 data/normalized/jobs/*.normalized.json 2>/dev/null | wc -l)
+            if [ "$FILE_COUNT" -lt 12 ]; then
+              echo "needs_bootstrap=true" >> $GITHUB_OUTPUT
+              echo "Bootstrap required: Only $FILE_COUNT months of history (need at least 12)"
+            else
+              echo "needs_bootstrap=false" >> $GITHUB_OUTPUT
+              echo "Historical data exists: $FILE_COUNT months"
+            fi
+          fi
+
+      - name: Bootstrap historical data (Jobs)
+        if: steps.bootstrap_check.outputs.needs_bootstrap == 'true'
+        env:
+          DATASET: jobs
+          BLS_API_KEY: ${{ secrets.BLS_API_KEY }}
+        run: |
+          echo "Running bootstrap to backfill 24 months of historical data..."
+          node scripts/bootstrap_bls_history.mjs
+
+      - name: Commit bootstrap data (Jobs)
+        if: steps.bootstrap_check.outputs.needs_bootstrap == 'true'
+        run: |
+          git config user.name "Newsroom Bot"
+          git config user.email "bot@readthedelta.com"
+          git add data/raw/jobs data/normalized/jobs
+          git commit -m "🔧 Bootstrap: Backfill 24 months of jobs data" || echo "No changes to commit"
+          git push origin main
+
       - name: Fetch BLS Data (Jobs)
         id: fetch
         env:
@@ -88,7 +124,7 @@ jobs:
           git config user.name "Newsroom Bot"
           git config user.email "bot@readthedelta.com"
           git add -A
-          git commit -m "📊 Update Jobs Report: ${{ steps.check.outputs.period }}" || echo "No changes to commit"
+          git commit -m "ðŸ“Š Update Jobs Report: ${{ steps.check.outputs.period }}" || echo "No changes to commit"
 
       - name: Push branch
         if: steps.check.outputs.skip != 'true'
@@ -98,7 +134,7 @@ jobs:
         if: steps.check.outputs.skip != 'true' && steps.review.outputs.review_status == 'PASS'
         run: |
           git checkout main
-          git merge "${{ steps.branch.outputs.branch }}" --no-ff -m "🚀 Auto-publish Jobs Report: ${{ steps.check.outputs.period }}"
+          git merge "${{ steps.branch.outputs.branch }}" --no-ff -m "ðŸš€ Auto-publish Jobs Report: ${{ steps.check.outputs.period }}"
           git push origin main
 
       - name: Create PR on FAIL
@@ -108,7 +144,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           branch: ${{ steps.branch.outputs.branch }}
           base: main
-          title: "⚠️ Manual Review Required: Jobs Report (${{ steps.check.outputs.period }})"
+          title: "âš ï¸ Manual Review Required: Jobs Report (${{ steps.check.outputs.period }})"
           body: |
             ## Automation Halted
             
@@ -151,6 +187,42 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Check if bootstrap needed (Inflation)
+        id: bootstrap_check
+        run: |
+          if [ ! -d "data/normalized/inflation" ] || [ -z "$(ls -A data/normalized/inflation 2>/dev/null)" ]; then
+            echo "needs_bootstrap=true" >> $GITHUB_OUTPUT
+            echo "Bootstrap required: No historical data found"
+          else
+            # Count files to ensure we have sufficient history
+            FILE_COUNT=$(ls -1 data/normalized/inflation/*.normalized.json 2>/dev/null | wc -l)
+            if [ "$FILE_COUNT" -lt 12 ]; then
+              echo "needs_bootstrap=true" >> $GITHUB_OUTPUT
+              echo "Bootstrap required: Only $FILE_COUNT months of history (need at least 12)"
+            else
+              echo "needs_bootstrap=false" >> $GITHUB_OUTPUT
+              echo "Historical data exists: $FILE_COUNT months"
+            fi
+          fi
+
+      - name: Bootstrap historical data (Inflation)
+        if: steps.bootstrap_check.outputs.needs_bootstrap == 'true'
+        env:
+          DATASET: inflation
+          BLS_API_KEY: ${{ secrets.BLS_API_KEY }}
+        run: |
+          echo "Running bootstrap to backfill 24 months of historical data..."
+          node scripts/bootstrap_bls_history.mjs
+
+      - name: Commit bootstrap data (Inflation)
+        if: steps.bootstrap_check.outputs.needs_bootstrap == 'true'
+        run: |
+          git config user.name "Newsroom Bot"
+          git config user.email "bot@readthedelta.com"
+          git add data/raw/inflation data/normalized/inflation
+          git commit -m "🔧 Bootstrap: Backfill 24 months of inflation data" || echo "No changes to commit"
+          git push origin main
 
       - name: Fetch BLS Data (Inflation)
         id: fetch
@@ -202,7 +274,7 @@ jobs:
           git config user.name "Newsroom Bot"
           git config user.email "bot@readthedelta.com"
           git add -A
-          git commit -m "📊 Update Inflation Report: ${{ steps.check.outputs.period }}" || echo "No changes to commit"
+          git commit -m "ðŸ“Š Update Inflation Report: ${{ steps.check.outputs.period }}" || echo "No changes to commit"
 
       - name: Push branch
         if: steps.check.outputs.skip != 'true'
@@ -212,7 +284,7 @@ jobs:
         if: steps.check.outputs.skip != 'true' && steps.review.outputs.review_status == 'PASS'
         run: |
           git checkout main
-          git merge "${{ steps.branch.outputs.branch }}" --no-ff -m "🚀 Auto-publish Inflation Report: ${{ steps.check.outputs.period }}"
+          git merge "${{ steps.branch.outputs.branch }}" --no-ff -m "ðŸš€ Auto-publish Inflation Report: ${{ steps.check.outputs.period }}"
           git push origin main
 
       - name: Create PR on FAIL
@@ -222,7 +294,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           branch: ${{ steps.branch.outputs.branch }}
           base: main
-          title: "⚠️ Manual Review Required: Inflation Report (${{ steps.check.outputs.period }})"
+          title: "âš ï¸ Manual Review Required: Inflation Report (${{ steps.check.outputs.period }})"
           body: |
             ## Automation Halted
             

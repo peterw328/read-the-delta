@@ -22,7 +22,7 @@ dotenv.config();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// scripts/ → repo root → data/
+// scripts/ â†’ repo root â†’ data/
 const DATA_DIR = path.join(__dirname, '..', 'data');
 
 // Configuration
@@ -289,10 +289,45 @@ function buildHistory(existingHistory, newReferencePeriod) {
 }
 
 /**
- * SIGNAL SENTENCE - HARDCODED CONSTANT
- * MUST appear exactly as written. No variations.
+ * SIGNAL SENTENCE MAPPING
+ * Maps signal state/pressure combinations to exact sentences
+ * These are injected verbatim - AI must not generate these
  */
-const SIGNAL_SENTENCE = 'Signal: decelerating and tight.';
+const SIGNAL_SENTENCES = {
+  // Jobs dataset signals
+  'decelerating|tight': 'Signal: decelerating. Labor market conditions remain tight.',
+  'decelerating|loosening': 'Signal: decelerating. Labor market conditions are loosening.',
+  'decelerating|neutral': 'Signal: decelerating. Labor market conditions are neutral.',
+  'accelerating|tight': 'Signal: accelerating. Labor market conditions remain tight.',
+  'accelerating|loosening': 'Signal: accelerating. Labor market conditions are loosening.',
+  'accelerating|neutral': 'Signal: accelerating. Labor market conditions are neutral.',
+  'steady|tight': 'Signal: steady. Labor market conditions remain tight.',
+  'steady|loosening': 'Signal: steady. Labor market conditions are loosening.',
+  'steady|neutral': 'Signal: steady. Labor market conditions are neutral.',
+  
+  // Inflation dataset signals
+  'elevated|tight': 'Signal: elevated. Price pressures remain tight.',
+  'elevated|easing': 'Signal: elevated. Price pressures are easing.',
+  'elevated|neutral': 'Signal: elevated. Price pressures are neutral.',
+  'moderating|tight': 'Signal: moderating. Price pressures remain tight.',
+  'moderating|easing': 'Signal: moderating. Price pressures are easing.',
+  'moderating|neutral': 'Signal: moderating. Price pressures are neutral.',
+  'stable|tight': 'Signal: stable. Price pressures remain tight.',
+  'stable|easing': 'Signal: stable. Price pressures are easing.',
+  'stable|neutral': 'Signal: stable. Price pressures are neutral.'
+};
+
+/**
+ * Get signal sentence based on state and pressure
+ * Returns fallback if signal not set or combination not found
+ */
+function getSignalSentence(signal) {
+  if (!signal || !signal.state || !signal.pressure) {
+    return 'Signal: not set.';
+  }
+  const key = `${signal.state.toLowerCase()}|${signal.pressure.toLowerCase()}`;
+  return SIGNAL_SENTENCES[key] || `Signal: ${signal.state.toLowerCase()}. Conditions are ${signal.pressure.toLowerCase()}.`;
+}
 
 /**
  * FAIL-SAFE DEFAULT TEXT
@@ -442,8 +477,9 @@ function buildCpiMomSentence(normalized) {
  * BUILD HEADLINE - DETERMINISTIC
  * Uses DELTA for payrolls title. SILENCE on missing data.
  */
-function buildHeadline(dataset, normalized) {
+function buildHeadline(dataset, normalized, signal) {
   const period = formatPeriodForDisplay(normalized.reference_period);
+  const signalSentence = getSignalSentence(signal);
   
   if (dataset === 'jobs') {
     const delta = extractValue(normalized.deltas?.payrolls);
@@ -453,7 +489,7 @@ function buildHeadline(dataset, normalized) {
       return {
         title: `Jobs Report: ${period}`,
         summary: FALLBACK_TEXT,
-        context: SIGNAL_SENTENCE
+        context: signalSentence
       };
     }
     
@@ -472,7 +508,7 @@ function buildHeadline(dataset, normalized) {
     return {
       title: `Payrolls ${verb} ${formatted} in ${period}`,
       summary: summary,
-      context: SIGNAL_SENTENCE
+      context: signalSentence
     };
   }
   
@@ -483,7 +519,7 @@ function buildHeadline(dataset, normalized) {
       return {
         title: `Inflation Report: ${period}`,
         summary: FALLBACK_TEXT,
-        context: SIGNAL_SENTENCE
+        context: signalSentence
       };
     }
     
@@ -497,14 +533,14 @@ function buildHeadline(dataset, normalized) {
     return {
       title: `Inflation measured ${level} percent year-over-year in ${period}`,
       summary: summary,
-      context: SIGNAL_SENTENCE
+      context: signalSentence
     };
   }
   
   return {
     title: `${dataset} Report: ${period}`,
     summary: FALLBACK_TEXT,
-    context: SIGNAL_SENTENCE
+    context: signalSentence
   };
 }
 
@@ -582,14 +618,11 @@ function buildEditorial(dataset, normalized) {
 
 /**
  * Draft editorial content - FULLY DETERMINISTIC
- * No AI. All templates hardcoded. Signal injected unconditionally.
+ * No AI. All templates hardcoded. Signal injected via getSignalSentence().
  */
 async function draftEditorial(dataset, normalized, existingLatest, signal) {
-  const headline = buildHeadline(dataset, normalized);
+  const headline = buildHeadline(dataset, normalized, signal);
   const editorial = buildEditorial(dataset, normalized);
-  
-  // FORCE signal sentence - override any other value
-  headline.context = SIGNAL_SENTENCE;
   
   return { headline, editorial };
 }
