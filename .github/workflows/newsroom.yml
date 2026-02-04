@@ -90,7 +90,7 @@ jobs:
           else
             echo "New data found: ${{ steps.fetch.outputs.new_period }}"
             echo "skip=false" >> $GITHUB_OUTPUT
-            echo "period=${{ steps.fetch.outputs.new_period }}" >> $GITHUB_OUTPUT
+            echo "period=${{ steps.check.outputs.new_period }}" >> $GITHUB_OUTPUT
           fi
 
       - name: Create release branch
@@ -124,7 +124,7 @@ jobs:
           git config user.name "Newsroom Bot"
           git config user.email "bot@readthedelta.com"
           git add -A
-          git commit -m "ðŸ“Š Update Jobs Report: ${{ steps.check.outputs.period }}" || echo "No changes to commit"
+          git commit -m "📊 Update Jobs Report: ${{ steps.check.outputs.period }}" || echo "No changes to commit"
 
       - name: Push branch
         if: steps.check.outputs.skip != 'true'
@@ -134,7 +134,7 @@ jobs:
         if: steps.check.outputs.skip != 'true' && steps.review.outputs.review_status == 'PASS'
         run: |
           git checkout main
-          git merge "${{ steps.branch.outputs.branch }}" --no-ff -m "ðŸš€ Auto-publish Jobs Report: ${{ steps.check.outputs.period }}"
+          git merge "${{ steps.branch.outputs.branch }}" --no-ff -m "🚀 Auto-publish Jobs Report: ${{ steps.check.outputs.period }}"
           git push origin main
 
       - name: Create PR on FAIL
@@ -144,7 +144,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           branch: ${{ steps.branch.outputs.branch }}
           base: main
-          title: "âš ï¸ Manual Review Required: Jobs Report (${{ steps.check.outputs.period }})"
+          title: "⚠️ Manual Review Required: Jobs Report (${{ steps.check.outputs.period }})"
           body: |
             ## Automation Halted
             
@@ -240,7 +240,7 @@ jobs:
           else
             echo "New data found: ${{ steps.fetch.outputs.new_period }}"
             echo "skip=false" >> $GITHUB_OUTPUT
-            echo "period=${{ steps.fetch.outputs.new_period }}" >> $GITHUB_OUTPUT
+            echo "period=${{ steps.check.outputs.new_period }}" >> $GITHUB_OUTPUT
           fi
 
       - name: Create release branch
@@ -274,7 +274,7 @@ jobs:
           git config user.name "Newsroom Bot"
           git config user.email "bot@readthedelta.com"
           git add -A
-          git commit -m "ðŸ“Š Update Inflation Report: ${{ steps.check.outputs.period }}" || echo "No changes to commit"
+          git commit -m "📊 Update Inflation Report: ${{ steps.check.outputs.period }}" || echo "No changes to commit"
 
       - name: Push branch
         if: steps.check.outputs.skip != 'true'
@@ -284,7 +284,7 @@ jobs:
         if: steps.check.outputs.skip != 'true' && steps.review.outputs.review_status == 'PASS'
         run: |
           git checkout main
-          git merge "${{ steps.branch.outputs.branch }}" --no-ff -m "ðŸš€ Auto-publish Inflation Report: ${{ steps.check.outputs.period }}"
+          git merge "${{ steps.branch.outputs.branch }}" --no-ff -m "🚀 Auto-publish Inflation Report: ${{ steps.check.outputs.period }}"
           git push origin main
 
       - name: Create PR on FAIL
@@ -294,7 +294,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           branch: ${{ steps.branch.outputs.branch }}
           base: main
-          title: "âš ï¸ Manual Review Required: Inflation Report (${{ steps.check.outputs.period }})"
+          title: "⚠️ Manual Review Required: Inflation Report (${{ steps.check.outputs.period }})"
           body: |
             ## Automation Halted
             
