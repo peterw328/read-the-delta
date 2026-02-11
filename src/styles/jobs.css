@@ -1,4 +1,4 @@
-/* jobs.css — Jobs Report layout */
+/* jobs.css  -  Jobs Report layout */
 
 /* ============================================
    SITE HEADER
@@ -234,7 +234,7 @@
 }
 
 .delta-up::before {
-  content: "↑ ";
+  content: "\2191\00a0";
 }
 
 .delta-down {
@@ -242,7 +242,7 @@
 }
 
 .delta-down::before {
-  content: "↓ ";
+  content: "\2193\00a0";
 }
 
 .delta-flat {
@@ -250,7 +250,7 @@
 }
 
 .delta-flat::before {
-  content: "— ";
+  content: "\2014\00a0";
 }
 
 /* Sparkline */
@@ -305,7 +305,7 @@
 }
 
 .change-list li::before {
-  content: "·";
+  content: "\00B7";
   position: absolute;
   left: 0;
   color: var(--color-ink-muted);
@@ -397,6 +397,32 @@
 
 .footer-link:hover {
   color: var(--color-ink);
+}
+
+.footer-related {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-xs);
+  margin-bottom: var(--space-md);
+  font-size: var(--text-xs);
+}
+
+.footer-related-label {
+  color: var(--color-ink-faint);
+  letter-spacing: var(--tracking-wide);
+}
+
+.footer-related-link {
+  color: var(--color-ink-muted);
+  text-decoration: none;
+}
+
+.footer-related-link:hover {
+  color: var(--color-ink);
+}
+
+.footer-related-desc {
+  color: var(--color-ink-faint);
 }
 
 .footer-copyright {

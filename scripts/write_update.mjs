@@ -289,9 +289,9 @@ function buildHistory(existingHistory, newReferencePeriod) {
 }
 
 /**
- * SIGNAL SENTENCE MAPPING
- * Maps signal state/pressure combinations to exact sentences
- * These are injected verbatim - AI must not generate these
+ * SIGNAL SENTENCE MAPPING TABLE
+ * Built from signal.state and signal.pressure per SIGNAL_SENTENCE_MAPPING.md
+ * The AI must NOT generate signal sentences. They are injected verbatim by code.
  */
 const SIGNAL_SENTENCES = {
   // Jobs dataset signals
@@ -304,7 +304,10 @@ const SIGNAL_SENTENCES = {
   'steady|tight': 'Signal: steady. Labor market conditions remain tight.',
   'steady|loosening': 'Signal: steady. Labor market conditions are loosening.',
   'steady|neutral': 'Signal: steady. Labor market conditions are neutral.',
-  
+  'contracting|tight': 'Signal: contracting. Labor market conditions remain tight.',
+  'contracting|loosening': 'Signal: contracting. Labor market conditions are loosening.',
+  'contracting|neutral': 'Signal: contracting. Labor market conditions are neutral.',
+
   // Inflation dataset signals
   'elevated|tight': 'Signal: elevated. Price pressures remain tight.',
   'elevated|easing': 'Signal: elevated. Price pressures are easing.',
@@ -314,12 +317,15 @@ const SIGNAL_SENTENCES = {
   'moderating|neutral': 'Signal: moderating. Price pressures are neutral.',
   'stable|tight': 'Signal: stable. Price pressures remain tight.',
   'stable|easing': 'Signal: stable. Price pressures are easing.',
-  'stable|neutral': 'Signal: stable. Price pressures are neutral.'
+  'stable|neutral': 'Signal: stable. Price pressures are neutral.',
+  'steady|tight': 'Signal: steady. Price pressures remain tight.',
+  'steady|easing': 'Signal: steady. Price pressures are easing.',
+  'steady|neutral': 'Signal: steady. Price pressures are neutral.'
 };
 
 /**
- * Get signal sentence based on state and pressure
- * Returns fallback if signal not set or combination not found
+ * Get signal sentence from signal object
+ * Returns exact mapped sentence or generic fallback
  */
 function getSignalSentence(signal) {
   if (!signal || !signal.state || !signal.pressure) {
@@ -440,7 +446,7 @@ function buildWagesSentence(normalized) {
  * Returns null if missing.
  */
 function buildCpiSentence(normalized) {
-  const level = extractValue(normalized.metrics?.cpi_all_items_yoy);
+  const level = extractValue(normalized.metrics?.cpi_yoy);
   if (!hasValue(level)) return null;
   
   return `The Consumer Price Index stands at ${level} percent year-over-year.`;
@@ -452,7 +458,7 @@ function buildCpiSentence(normalized) {
  * Returns null if missing.
  */
 function buildCoreCpiSentence(normalized) {
-  const level = extractValue(normalized.metrics?.cpi_core_yoy);
+  const level = extractValue(normalized.metrics?.core_yoy);
   if (!hasValue(level)) return null;
   
   return `Core CPI stands at ${level} percent year-over-year.`;
@@ -513,7 +519,7 @@ function buildHeadline(dataset, normalized, signal) {
   }
   
   if (dataset === 'inflation') {
-    const level = extractValue(normalized.metrics?.cpi_all_items_yoy);
+    const level = extractValue(normalized.metrics?.cpi_yoy);
     
     if (!hasValue(level)) {
       return {
@@ -542,21 +548,6 @@ function buildHeadline(dataset, normalized, signal) {
     summary: FALLBACK_TEXT,
     context: signalSentence
   };
-}
-
-/**
- * BUILD CPI MOM SENTENCE - DELTA ONLY
- * Template: "Monthly prices {rose|fell} by X percent."
- * Returns null if delta is missing/zero.
- */
-function buildCpiMomSentence(normalized) {
-  const delta = extractValue(normalized.deltas?.cpi_mom);
-  if (!hasValue(delta)) return null;
-  
-  const verb = delta > 0 ? 'rose by' : 'fell by';
-  const formatted = Math.abs(delta).toFixed(1);
-  
-  return `Monthly prices ${verb} ${formatted} percent.`;
 }
 
 /**
@@ -618,11 +609,14 @@ function buildEditorial(dataset, normalized) {
 
 /**
  * Draft editorial content - FULLY DETERMINISTIC
- * No AI. All templates hardcoded. Signal injected via getSignalSentence().
+ * No AI. All templates hardcoded. Signal injected from mapping table.
  */
 async function draftEditorial(dataset, normalized, existingLatest, signal) {
   const headline = buildHeadline(dataset, normalized, signal);
   const editorial = buildEditorial(dataset, normalized);
+  
+  // FORCE signal sentence from mapping table - override any other value
+  headline.context = getSignalSentence(signal);
   
   return { headline, editorial };
 }

@@ -3,6 +3,16 @@
  * fetch_bls.mjs - The Ingestor
  * Fetches raw data from BLS API and computes normalized snapshots
  * 
+ * INFLATION FIX (2026-02-10):
+ * The BLS API returns raw CPI index levels (e.g., 326.030), NOT pre-computed
+ * percentage changes. This script now computes:
+ *   - YoY: (current_index / index_12_months_ago - 1) * 100
+ *   - MoM: (current_index / prior_month_index - 1) * 100
+ *   - Core YoY: same formula using core CPI index
+ * 
+ * For the jobs dataset, BLS returns values that can be used directly
+ * (payrolls in thousands, unemployment as percent, etc.)
+ * 
  * Exit codes:
  *   0 - Success (new data ingested) or no new data available
  *   1 - Error (API failure, validation failure, etc.)
@@ -23,7 +33,7 @@ dotenv.config();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// scripts/ → repo root → data/
+// scripts/ -> repo root -> data/
 const DATA_DIR = path.join(__dirname, '..', 'data');
 
 // Configuration
@@ -38,12 +48,8 @@ const MONTHLY_PERIODS = ['M01', 'M02', 'M03', 'M04', 'M05', 'M06', 'M07', 'M08',
 const TREND_LENGTH = 24;
 
 /**
- * METRIC DEFINITIONS
- * Defines unit, scale, and precision for each metric.
- * - raw_value: number as returned by BLS
- * - scale: multiplier to convert raw to display (e.g., 0.1 for wage index → percent)
- * - unit: display unit label
- * - precision: decimal places for display_value
+ * METRIC DEFINITIONS (JOBS only)
+ * Inflation metrics are computed from index values, not read directly.
  */
 const METRIC_DEFINITIONS = {
   jobs: {
@@ -52,18 +58,52 @@ const METRIC_DEFINITIONS = {
     labor_force_participation: { unit: 'percent', scale: 1, precision: 1 },
     average_hourly_earnings: { unit: 'dollars', scale: 1, precision: 2 },
     average_hourly_earnings_yoy: { unit: 'percent', scale: 0.1, precision: 1 }
-  },
-  inflation: {
-    cpi_all_items: { unit: 'index', scale: 1, precision: 1 },
-    cpi_all_items_yoy: { unit: 'percent', scale: 1, precision: 1 },
-    cpi_core: { unit: 'index', scale: 1, precision: 1 },
-    cpi_core_yoy: { unit: 'percent', scale: 1, precision: 1 },
-    cpi_mom: { unit: 'percent', scale: 1, precision: 1 }
   }
 };
 
 /**
- * Load existing dataset file to get series IDs
+ * INFLATION SERIES CONFIGURATION
+ * Maps the BLS series IDs to the raw index values we need.
+ * The derived metrics (YoY, MoM) are computed from these indices.
+ * 
+ * BLS Series:
+ *   CUSR0000SA0    = CPI All Items, Seasonally Adjusted
+ *   CUSR0000SA0L1E = CPI All Items Less Food and Energy, Seasonally Adjusted
+ * 
+ * Note: CUUR0000SA0 is NOT seasonally adjusted. We use CUSR for SA data.
+ */
+const INFLATION_RAW_SERIES = {
+  cpi_all_items: 'CUSR0000SA0',
+  cpi_core: 'CUSR0000SA0L1E'
+};
+
+/**
+ * INFLATION DERIVED METRICS
+ * Maps display keys (used in latest.inflation.json) to computation rules.
+ */
+const INFLATION_DERIVED_METRICS = {
+  cpi_yoy: {
+    source_index: 'cpi_all_items',
+    computation: 'yoy',
+    unit: 'percent',
+    precision: 1
+  },
+  cpi_mom: {
+    source_index: 'cpi_all_items',
+    computation: 'mom',
+    unit: 'percent',
+    precision: 1
+  },
+  core_yoy: {
+    source_index: 'cpi_core',
+    computation: 'yoy',
+    unit: 'percent',
+    precision: 1
+  }
+};
+
+/**
+ * Load existing dataset file to get series IDs and config
  */
 async function loadDatasetConfig(dataset) {
   const latestPath = path.join(DATA_DIR, `latest.${dataset}.json`);
@@ -183,10 +223,8 @@ async function loadNormalizedHistory(dataset, currentYYYYMM, monthsNeeded = 23) 
   const normalizedDir = path.join(DATA_DIR, 'normalized', dataset);
   const history = [];
 
-  // Parse current period
   const [currentYear, currentMonth] = currentYYYYMM.split('-').map(Number);
 
-  // Go back monthsNeeded months
   for (let i = monthsNeeded; i >= 1; i--) {
     let targetMonth = currentMonth - i;
     let targetYear = currentYear;
@@ -203,7 +241,6 @@ async function loadNormalizedHistory(dataset, currentYYYYMM, monthsNeeded = 23) 
       const content = await fs.readFile(filePath, 'utf-8');
       history.push(JSON.parse(content));
     } catch {
-      // File doesn't exist, push null placeholder
       history.push(null);
     }
   }
@@ -212,7 +249,7 @@ async function loadNormalizedHistory(dataset, currentYYYYMM, monthsNeeded = 23) 
 }
 
 /**
- * Extract metric values from latest data based on series mapping
+ * Extract metric values from latest data based on series mapping (JOBS only)
  * Returns structured metrics with raw_value, display_value, unit, scale
  */
 function extractMetrics(dataset, latestPeriod, seriesMapping) {
@@ -241,28 +278,125 @@ function extractMetrics(dataset, latestPeriod, seriesMapping) {
 }
 
 /**
+ * Build a lookup map of all monthly values for a BLS series
+ * Returns: { "YYYY-MM": float_value, ... }
+ */
+function buildSeriesLookup(seriesData, seriesId) {
+  const lookup = {};
+  
+  for (const series of seriesData) {
+    if (series.seriesID !== seriesId) continue;
+    
+    for (const dataPoint of series.data) {
+      if (!MONTHLY_PERIODS.includes(dataPoint.period)) continue;
+      const yyyymm = periodToYYYYMM(dataPoint.year, dataPoint.period);
+      lookup[yyyymm] = parseFloat(dataPoint.value);
+    }
+  }
+  
+  return lookup;
+}
+
+/**
+ * Get the YYYY-MM that is N months before a given YYYY-MM
+ */
+function monthsAgo(yyyymm, n) {
+  let [year, month] = yyyymm.split('-').map(Number);
+  month -= n;
+  while (month <= 0) {
+    month += 12;
+    year -= 1;
+  }
+  return `${year}-${String(month).padStart(2, '0')}`;
+}
+
+/**
+ * Compute inflation metrics from raw CPI index values
+ * 
+ * This is the core fix. BLS series CUSR0000SA0 returns index levels
+ * (e.g., 326.030). We compute:
+ *   YoY = (current / twelve_months_ago - 1) * 100
+ *   MoM = (current / prior_month - 1) * 100
+ */
+function computeInflationMetrics(seriesData, currentYYYYMM) {
+  const metrics = {};
+  
+  for (const [displayKey, config] of Object.entries(INFLATION_DERIVED_METRICS)) {
+    const seriesId = INFLATION_RAW_SERIES[config.source_index];
+    const lookup = buildSeriesLookup(seriesData, seriesId);
+    
+    const currentValue = lookup[currentYYYYMM];
+    if (currentValue === undefined) {
+      console.error(`[fetch_bls] Missing current value for ${displayKey} (series ${seriesId}, period ${currentYYYYMM})`);
+      continue;
+    }
+    
+    let display_value = null;
+    
+    if (config.computation === 'yoy') {
+      const priorYYYYMM = monthsAgo(currentYYYYMM, 12);
+      const priorValue = lookup[priorYYYYMM];
+      
+      if (priorValue === undefined) {
+        console.error(`[fetch_bls] Missing 12-month-ago value for ${displayKey} (series ${seriesId}, period ${priorYYYYMM})`);
+        continue;
+      }
+      
+      display_value = Math.round(((currentValue / priorValue - 1) * 100) * Math.pow(10, config.precision)) / Math.pow(10, config.precision);
+      console.log(`[fetch_bls] ${displayKey}: ${currentValue} / ${priorValue} = ${display_value}%`);
+    }
+    
+    if (config.computation === 'mom') {
+      const priorYYYYMM = monthsAgo(currentYYYYMM, 1);
+      const priorValue = lookup[priorYYYYMM];
+      
+      if (priorValue === undefined) {
+        console.error(`[fetch_bls] Missing prior-month value for ${displayKey} (series ${seriesId}, period ${priorYYYYMM})`);
+        continue;
+      }
+      
+      display_value = Math.round(((currentValue / priorValue - 1) * 100) * Math.pow(10, config.precision)) / Math.pow(10, config.precision);
+      console.log(`[fetch_bls] ${displayKey}: ${currentValue} / ${priorValue} = ${display_value}%`);
+    }
+    
+    if (display_value !== null) {
+      metrics[displayKey] = {
+        raw_value: currentValue,
+        display_value,
+        unit: config.unit,
+        scale: 1,
+        precision: config.precision
+      };
+    }
+  }
+  
+  return metrics;
+}
+
+/**
  * Pad trend array to EXACTLY 24 values
- * Pads with null at the BEGINNING if fewer than 24 values
- * Order: oldest first, newest last
  */
 function padTrend(values) {
   if (values.length >= TREND_LENGTH) {
-    // Take last 24 values (oldest first, newest last)
     return values.slice(-TREND_LENGTH);
   }
-  
-  // Pad BEGINNING with nulls to reach exactly 24
   const padding = new Array(TREND_LENGTH - values.length).fill(null);
   return [...padding, ...values];
 }
 
 /**
  * Compute normalized data with deltas and trends
- * All values stored as structured objects with raw_value, display_value, unit
  */
-async function computeNormalized(dataset, latestPeriod, seriesMapping, existingLatest) {
+async function computeNormalized(dataset, latestPeriod, seriesMapping, existingLatest, seriesData) {
   const yyyymm = periodToYYYYMM(latestPeriod.year, latestPeriod.period);
-  const metrics = extractMetrics(dataset, latestPeriod, seriesMapping);
+  
+  // Compute metrics differently based on dataset
+  let metrics;
+  if (dataset === 'inflation') {
+    metrics = computeInflationMetrics(seriesData, yyyymm);
+  } else {
+    metrics = extractMetrics(dataset, latestPeriod, seriesMapping);
+  }
 
   // Load history for trend computation (23 prior months)
   const history = await loadNormalizedHistory(dataset, yyyymm, 23);
@@ -272,13 +406,12 @@ async function computeNormalized(dataset, latestPeriod, seriesMapping, existingL
   if (existingLatest.metrics) {
     for (const key of Object.keys(metrics)) {
       if (existingLatest.metrics[key]) {
-        // Handle both old format (just value) and new format (display_value)
         priorMetrics[key] = existingLatest.metrics[key].display_value ?? existingLatest.metrics[key].value;
       }
     }
   }
 
-  // Compute deltas using display_values (already scaled and rounded)
+  // Compute deltas using display_values
   const deltas = {};
   for (const [key, metric] of Object.entries(metrics)) {
     if (priorMetrics[key] !== undefined) {
@@ -293,12 +426,12 @@ async function computeNormalized(dataset, latestPeriod, seriesMapping, existingL
   }
 
   // Compute 24-month trends (23 historical + current)
-  // Use display_values for trends
   const trends = {};
+  const definitions = METRIC_DEFINITIONS[dataset] || {};
+  
   for (const key of Object.keys(metrics)) {
     const historicalValues = history.map(h => {
       if (h === null) return null;
-      // Handle both old format and new format
       const m = h.metrics?.[key];
       if (m === null || m === undefined) return null;
       return m.display_value ?? m;
@@ -322,14 +455,15 @@ async function computeNormalized(dataset, latestPeriod, seriesMapping, existingL
     }
   }
 
-  // Compute 12-month averages (using display_values from trends)
+  // Compute 12-month averages
   const twelveMonthAvg = {};
   for (const [key, trendValues] of Object.entries(trends)) {
     const last12 = trendValues.slice(-12).filter(v => v !== null && v !== undefined);
     if (last12.length > 0) {
       const avg = last12.reduce((a, b) => a + b, 0) / last12.length;
-      const def = METRIC_DEFINITIONS[dataset]?.[key] || { precision: 2 };
-      twelveMonthAvg[key] = Math.round(avg * Math.pow(10, def.precision)) / Math.pow(10, def.precision);
+      const metricDef = definitions[key] || INFLATION_DERIVED_METRICS[key] || { precision: 1 };
+      const prec = metricDef.precision ?? 1;
+      twelveMonthAvg[key] = Math.round(avg * Math.pow(10, prec)) / Math.pow(10, prec);
     }
   }
 
@@ -355,15 +489,12 @@ async function saveData(dataset, yyyymm, rawData, normalizedData) {
   const rawPath = path.join(DATA_DIR, 'raw', dataset, `${yyyymm}.json`);
   const normalizedPath = path.join(DATA_DIR, 'normalized', dataset, `${yyyymm}.normalized.json`);
 
-  // Ensure directories exist
   await fs.mkdir(path.dirname(rawPath), { recursive: true });
   await fs.mkdir(path.dirname(normalizedPath), { recursive: true });
 
-  // Save raw (immutable source)
   await fs.writeFile(rawPath, JSON.stringify(rawData, null, 2));
   console.log(`[fetch_bls] Saved raw data: ${rawPath}`);
 
-  // Save normalized
   await fs.writeFile(normalizedPath, JSON.stringify(normalizedData, null, 2));
   console.log(`[fetch_bls] Saved normalized data: ${normalizedPath}`);
 }
@@ -376,24 +507,37 @@ async function main() {
 
   // Load existing dataset config
   const existingLatest = await loadDatasetConfig(DATASET);
-  const seriesMapping = existingLatest.source?.series_ids;
 
-  if (!seriesMapping || Object.keys(seriesMapping).length === 0) {
-    console.error(`[fetch_bls] No series_ids found in latest.${DATASET}.json`);
-    process.exit(1);
+  // Determine which BLS series to fetch
+  let seriesIds;
+  let seriesMapping;
+  
+  if (DATASET === 'inflation') {
+    // Inflation: use hardcoded SA series IDs (not from latest.json)
+    seriesIds = Object.values(INFLATION_RAW_SERIES);
+    seriesMapping = INFLATION_RAW_SERIES;
+    console.log(`[fetch_bls] Inflation mode: fetching raw index series`);
+    console.log(`[fetch_bls] Series: ${JSON.stringify(INFLATION_RAW_SERIES)}`);
+  } else {
+    // Jobs: use series IDs from latest.json
+    seriesMapping = existingLatest.source?.series_ids;
+    if (!seriesMapping || Object.keys(seriesMapping).length === 0) {
+      console.error(`[fetch_bls] No series_ids found in latest.${DATASET}.json`);
+      process.exit(1);
+    }
+    seriesIds = Object.values(seriesMapping);
   }
 
-  const seriesIds = Object.values(seriesMapping);
   console.log(`[fetch_bls] Series IDs: ${seriesIds.join(', ')}`);
 
-  // Determine year range (current year and previous, handles January edge case)
+  // Determine year range
+  // For inflation YoY we need 13 months back, so fetch 2 prior years
   const currentYear = new Date().getFullYear();
-  const startYear = currentYear - 1;
+  const startYear = currentYear - 2;
   const endYear = currentYear;
 
   console.log(`[fetch_bls] Fetching BLS data for ${startYear}-${endYear}`);
 
-  // Fetch from BLS using axios
   let seriesData;
   try {
     seriesData = await fetchBLS(seriesIds, startYear, endYear);
@@ -418,8 +562,8 @@ async function main() {
     process.exit(0);
   }
 
-  // Compute normalized data
-  const normalizedData = await computeNormalized(DATASET, latestPeriod, seriesMapping, existingLatest);
+  // Compute normalized data (pass full seriesData for inflation computation)
+  const normalizedData = await computeNormalized(DATASET, latestPeriod, seriesMapping, existingLatest, seriesData);
 
   // Prepare raw data snapshot
   const rawData = {
@@ -434,7 +578,6 @@ async function main() {
   // Save both files
   await saveData(DATASET, yyyymm, rawData, normalizedData);
 
-  // Write reference period to stdout for downstream scripts
   console.log(`[fetch_bls] NEW_PERIOD=${yyyymm}`);
   
   // Set output for GitHub Actions

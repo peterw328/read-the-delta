@@ -23,7 +23,7 @@ dotenv.config();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// scripts/ → repo root → data/
+// scripts/ â†’ repo root â†’ data/
 const DATA_DIR = path.join(__dirname, '..', 'data');
 
 // Configuration
@@ -34,7 +34,7 @@ const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
  * Critical patterns that fail the build
  */
 const CRITICAL_PATTERNS = [
-  { pattern: /—/g, name: 'em-dash' },
+  { pattern: /â€”/g, name: 'em-dash' },
   { pattern: /;/g, name: 'semicolon' },
   { pattern: /!/g, name: 'exclamation point' }
 ];
@@ -119,13 +119,47 @@ function validateNumericConsistency(candidate) {
 }
 
 /**
- * REQUIRED SIGNAL SENTENCE - EXACT MATCH
+ * SIGNAL SENTENCE MAPPING TABLE
+ * Must match the table in write_update.mjs exactly.
  */
-const REQUIRED_SIGNAL_SENTENCE = 'Signal: decelerating and tight.';
+const SIGNAL_SENTENCES = {
+  'decelerating|tight': 'Signal: decelerating. Labor market conditions remain tight.',
+  'decelerating|loosening': 'Signal: decelerating. Labor market conditions are loosening.',
+  'decelerating|neutral': 'Signal: decelerating. Labor market conditions are neutral.',
+  'accelerating|tight': 'Signal: accelerating. Labor market conditions remain tight.',
+  'accelerating|loosening': 'Signal: accelerating. Labor market conditions are loosening.',
+  'accelerating|neutral': 'Signal: accelerating. Labor market conditions are neutral.',
+  'steady|tight': 'Signal: steady. Labor market conditions remain tight.',
+  'steady|loosening': 'Signal: steady. Labor market conditions are loosening.',
+  'steady|neutral': 'Signal: steady. Labor market conditions are neutral.',
+  'contracting|tight': 'Signal: contracting. Labor market conditions remain tight.',
+  'contracting|loosening': 'Signal: contracting. Labor market conditions are loosening.',
+  'contracting|neutral': 'Signal: contracting. Labor market conditions are neutral.',
+  'elevated|tight': 'Signal: elevated. Price pressures remain tight.',
+  'elevated|easing': 'Signal: elevated. Price pressures are easing.',
+  'elevated|neutral': 'Signal: elevated. Price pressures are neutral.',
+  'moderating|tight': 'Signal: moderating. Price pressures remain tight.',
+  'moderating|easing': 'Signal: moderating. Price pressures are easing.',
+  'moderating|neutral': 'Signal: moderating. Price pressures are neutral.',
+  'stable|tight': 'Signal: stable. Price pressures remain tight.',
+  'stable|easing': 'Signal: stable. Price pressures are easing.',
+  'stable|neutral': 'Signal: stable. Price pressures are neutral.',
+  'steady|tight': 'Signal: steady. Price pressures remain tight.',
+  'steady|easing': 'Signal: steady. Price pressures are easing.',
+  'steady|neutral': 'Signal: steady. Price pressures are neutral.'
+};
+
+function getSignalSentence(signal) {
+  if (!signal || !signal.state || !signal.pressure) {
+    return 'Signal: not set.';
+  }
+  const key = `${signal.state.toLowerCase()}|${signal.pressure.toLowerCase()}`;
+  return SIGNAL_SENTENCES[key] || `Signal: ${signal.state.toLowerCase()}. Conditions are ${signal.pressure.toLowerCase()}.`;
+}
 
 /**
- * Validate signal sentence is EXACTLY correct
- * This is a hard fail - no AI interpretation allowed.
+ * Validate signal sentence matches what the mapping table would produce
+ * Reads signal from candidate.signal and compares to headline.context
  */
 function validateSignalSentence(candidate) {
   const context = candidate.headline?.context;
@@ -134,10 +168,12 @@ function validateSignalSentence(candidate) {
     return { valid: false, error: 'Missing headline.context' };
   }
   
-  if (context !== REQUIRED_SIGNAL_SENTENCE) {
+  const expectedSentence = getSignalSentence(candidate.signal);
+  
+  if (context !== expectedSentence) {
     return { 
       valid: false, 
-      error: `Signal sentence mismatch. Expected: "${REQUIRED_SIGNAL_SENTENCE}" Got: "${context}"` 
+      error: `Signal sentence mismatch. Expected: "${expectedSentence}" Got: "${context}"` 
     };
   }
   
@@ -224,9 +260,15 @@ FAIL CRITERIA (any of these = FAIL):
 
 1. Signal Conflict: Headline or editorial contradicts the locked Signal.
    - Example: Signal says "decelerating" but headline says "surges" or "accelerates"
-   - REQUIRED: The editorial or headline context MUST contain one explicit mechanical signal sentence like:
-     "Signal: decelerating with tight pressure." or "Signal remains decelerating and tight."
-   - Subjective paraphrase ("signs of deceleration...") is NOT acceptable.
+   - REQUIRED: The headline.context field MUST contain an explicit mechanical signal sentence.
+   - Valid formats (from the mapping table):
+     "Signal: decelerating. Labor market conditions remain tight."
+     "Signal: steady. Price pressures are easing."
+     "Signal: [state]. [Conditions description]."
+   - The signal sentence has ALREADY been validated by deterministic pre-checks.
+     If the context field starts with "Signal:" and contains the correct state word, it PASSES.
+   - Do NOT fail for signal sentence format alone. Focus on whether the headline and editorial
+     CONTRADICT the signal (e.g., signal says "steady" but headline says "surges").
 
 2. Numeric Mismatch: Any number stated must match either:
    - A LEVEL from candidate.metrics[*].value (when describing a level/standing value), OR
@@ -239,7 +281,7 @@ FAIL CRITERIA (any of these = FAIL):
 
 3. Non-neutral Tone: Investment advice, predictions, speculation, or sensationalism.
 
-4. Style Violations: Em-dashes (—), semicolons (;), filler phrases ("it is worth noting", "moreover", "overall").
+4. Style Violations: Em-dashes, semicolons (;), filler phrases ("it is worth noting", "moreover", "overall").
 
 OUTPUT: Return ONLY a valid JSON object:
 {

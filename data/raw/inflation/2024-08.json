@@ -1,0 +1,14 @@
+{
+  "fetched_at": "2026-02-11T03:45:51.218Z",
+  "source": "BLS API (bootstrap backfill)",
+  "reference_period": "2024-08",
+  "values": {
+    "cpi_yoy": 2.6,
+    "cpi_mom": 0.2,
+    "core_yoy": 3.3
+  },
+  "series_ids": {
+    "cpi_all_items": "CUSR0000SA0",
+    "cpi_core": "CUSR0000SA0L1E"
+  }
+}

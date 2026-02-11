@@ -1,4 +1,4 @@
-/* home.css — Homepage styles */
+/* home.css â€” Homepage styles */
 
 .page-home {
   max-width: 36rem;
@@ -129,7 +129,7 @@
 }
 
 .usage-list li::before {
-  content: "·";
+  content: "\00B7";
   position: absolute;
   left: 0;
   color: var(--color-ink-muted);

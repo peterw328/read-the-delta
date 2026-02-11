@@ -71,6 +71,11 @@ function generateFooter() {
       <a href="/methodology.html" class="footer-link">Methodology</a>
       <a href="/legal.html" class="footer-link">Legal</a>
     </nav>
+    <div class="footer-related">
+      <span class="footer-related-label">Related</span>
+      <a href="https://item1adelta.com" class="footer-related-link" target="_blank" rel="noopener">Item 1A Delta</a>
+      <span class="footer-related-desc">&mdash; SEC Risk Disclosure Changes</span>
+    </div>
     <small class="footer-copyright">Read the Delta</small>
   </footer>`;
 }
@@ -196,14 +201,22 @@ function formatValue(value, unit, precision) {
 
 /**
  * Format a delta value with +/− prefix
+ * Values that round to zero at the given precision display as flat (no prefix)
  */
 function formatDelta(delta, unit, precision) {
-  if (delta == null) return '—';
+  if (delta == null) return '\u2014';
   
   const prec = precision ?? 1;
-  const isNegative = delta < 0;
   const absValue = Math.abs(delta);
-  const prefix = delta > 0 ? '+' : (isNegative ? '−' : '');
+  
+  // If value rounds to zero at display precision, treat as flat
+  const rounded = Number(absValue.toFixed(prec));
+  if (rounded === 0) {
+    delta = 0;
+  }
+  
+  const isNegative = delta < 0;
+  const prefix = delta > 0 ? '+' : (isNegative ? '\u2212' : '');
   
   switch (unit) {
     case 'percent':
@@ -231,8 +244,13 @@ function formatDelta(delta, unit, precision) {
 
 /**
  * Get delta direction class
+ * Values that round to zero at display precision are flat
  */
-function getDeltaClass(delta) {
+function getDeltaClass(delta, precision) {
+  if (delta == null) return 'delta-flat';
+  const prec = precision ?? 1;
+  const rounded = Number(Math.abs(delta).toFixed(prec));
+  if (rounded === 0) return 'delta-flat';
   if (delta > 0) return 'delta-up';
   if (delta < 0) return 'delta-down';
   return 'delta-flat';
@@ -346,7 +364,7 @@ function renderMetric(key, metric, comparisons) {
   if (deltaEl) {
     deltaEl.textContent = formatDelta(delta, unit, precision);
     deltaEl.classList.remove('delta-up', 'delta-down', 'delta-flat');
-    deltaEl.classList.add(getDeltaClass(delta));
+    deltaEl.classList.add(getDeltaClass(delta, precision));
   }
   
   // Context (12-month average): #${key}-context

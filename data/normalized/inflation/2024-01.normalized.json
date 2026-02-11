@@ -1,0 +1,116 @@
+{
+  "reference_period": "2024-01",
+  "fetched_at": "2026-02-11T03:45:51.192Z",
+  "metrics": {
+    "cpi_yoy": {
+      "raw_value": 3.1,
+      "display_value": 3.1,
+      "unit": "percent",
+      "scale": 1,
+      "precision": 1
+    },
+    "cpi_mom": {
+      "raw_value": 0.3,
+      "display_value": 0.3,
+      "unit": "percent",
+      "scale": 1,
+      "precision": 1
+    },
+    "core_yoy": {
+      "raw_value": 3.9,
+      "display_value": 3.9,
+      "unit": "percent",
+      "scale": 1,
+      "precision": 1
+    }
+  },
+  "deltas": {},
+  "comparisons": {
+    "prior_release": {},
+    "twelve_month_average": {
+      "cpi_yoy": 3.1,
+      "cpi_mom": 0.3,
+      "core_yoy": 3.9
+    },
+    "trend": {
+      "cpi_yoy": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        3.1
+      ],
+      "cpi_mom": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        0.3
+      ],
+      "core_yoy": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        3.9
+      ]
+    }
+  }
+}

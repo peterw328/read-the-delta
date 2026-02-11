@@ -1,4 +1,4 @@
-/* pages.css — Styling for static prose pages (About, Methodology, Legal) */
+/* pages.css  -  Styling for static prose pages (About, Methodology, Legal) */
 
 /* ============================================
    SITE HEADER (shared)
@@ -143,7 +143,7 @@
 }
 
 .prose-section li::before {
-  content: "·";
+  content: "\00B7";
   position: absolute;
   left: 0;
   color: var(--color-ink-muted);
@@ -184,6 +184,32 @@
 
 .footer-link:hover {
   color: var(--color-ink);
+}
+
+.footer-related {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-xs);
+  margin-bottom: var(--space-md);
+  font-size: var(--text-xs);
+}
+
+.footer-related-label {
+  color: var(--color-ink-faint);
+  letter-spacing: var(--tracking-wide);
+}
+
+.footer-related-link {
+  color: var(--color-ink-muted);
+  text-decoration: none;
+}
+
+.footer-related-link:hover {
+  color: var(--color-ink);
+}
+
+.footer-related-desc {
+  color: var(--color-ink-faint);
 }
 
 .footer-copyright {
